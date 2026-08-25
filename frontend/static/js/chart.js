@@ -1279,7 +1279,7 @@ function initOutput() {
 
   // --- Kelas terdeteksi + confidence ---
   if (outClass) {
-    outClass.textContent = d.predicted_class || (d.rejected ? 'Objek Bukan Bawang' : '—');
+    outClass.textContent = d.rejected ? 'Objek Bukan Bawang' : (d.predicted_class || '—');
     outClass.style.color = d.rejected ? '#dc2626' : (d.color || '');
   }
   if (outLatin) outLatin.textContent = d.rejected ? 'Non-Allium Cepa' : (d.predicted_latin || '—');

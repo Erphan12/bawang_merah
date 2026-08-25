@@ -395,16 +395,16 @@ def api_predict_session(session_id: str = Query(...)):
         if "bukan" in str(p["name"]).lower() or "non" in str(p["name"]).lower():
             non_bawang_pct = p["pct"]
 
-    # Rejection Guard (Tolak jika bukan bawang / confidence ambigu):
-    # 1. Argmax murni 'non_bawang'
-    # 2. Confidence puncak < 55% (model sangat bingung/ragu)
-    # 3. Confidence < 65% dan probabilitas 'Bukan Bawang' > 20%
+    # Rejection Guard (Tolak HANYA jika memang 'Objek Bukan Bawang' atau confidence terlampau rendah < 30% / probabilitas Bukan Bawang > 40%):
     is_rejected = (
         (meta.get("display_name") == "Objek Bukan Bawang") or
         ("non" in str(predicted_label).lower()) or
-        (confidence_score < 55.0) or
-        (confidence_score < 65.0 and non_bawang_pct > 20.0)
+        (confidence_score < 30.0) or
+        (non_bawang_pct > 40.0)
     )
+
+    if is_rejected:
+        meta = DISEASE_METADATA["non_bawang"]
 
     # Ekstrak data layer CNN ASLI dan hitung relu_active_pct sesungguhnya
     layer_data = extract_layer_data(
@@ -422,7 +422,7 @@ def api_predict_session(session_id: str = Query(...)):
             "rejected": is_rejected,
             "rejection_message": "Gambar tidak terdeteksi sebagai tanaman/umbi bawang merah yang valid." if is_rejected else None,
             "is_simulation": False,
-            "predicted_class_idx": predicted_class_idx,
+            "predicted_class_idx": predicted_class_idx if not is_rejected else 3,
             "predicted_class": meta["display_name"],
             "predicted_latin": meta["latin"],
             "confidence": confidence_score,
@@ -430,7 +430,7 @@ def api_predict_session(session_id: str = Query(...)):
             "relu_active_pct": relu_active_pct,
             "rekomendasi": meta["rekomendasi"],
             "probabilities": probabilities_list,
-            "raw_label": predicted_label
+            "raw_label": predicted_label if not is_rejected else "non_bawang"
         }
     }
     session_data["prediction_cache"] = res_data
