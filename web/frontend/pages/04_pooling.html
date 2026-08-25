@@ -1,0 +1,104 @@
+<div class="page active" id="page3">
+  <div class="page-header">
+    <div class="page-eyebrow">Tahap 4 dari 7</div>
+    <div class="page-title">Max Pooling Layer</div>
+    <div class="page-desc">Jendela 2×2 mengambil nilai tertinggi setiap area. Proses ini terjadi 3 kali (Pool1, Pool2, Pool3) — tiap kali dimensi spasial diperkecil 50% (panjang & lebar) untuk mengurangi beban komputasi, sampai akhirnya menjadi 28×28×128 sebelum masuk Global Average Pooling.</div>
+  </div>
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-title">CARA KERJA MAX POOLING 2×2</div>
+        <div class="relu-formula">y = max(X<sub>2×2</sub>)</div>
+        <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:-8px;margin-bottom:10px;">
+          Max Pooling mengambil <b>nilai maksimum</b> dari setiap blok 2×2 untuk mempertahankan fitur paling kuat sambil mengurangi resolusi spasial sebesar 75%.
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 30px 1fr;align-items:center;gap:8px;">
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Sebelum (4×4 Aktivasi)</div>
+            <div id="poolBefore" style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;"></div>
+          </div>
+          <div style="text-align:center;font-size:20px;color:var(--text-muted);">→</div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Sesudah (2×2 Output)</div>
+            <div id="poolAfter" style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;"></div>
+          </div>
+        </div>
+        <div id="poolNote" style="font-size:12px;color:var(--text-secondary);margin-top:10px;padding:8px 10px;background:var(--bg);border-radius:var(--radius);">Tiap jendela 2×2 → ambil nilai tertinggi → 1 nilai output</div>
+      </div>
+
+      <!-- CARD 2: TABEL PERHITUNGAN EMPIRIS MAX POOLING -->
+      <div class="card" style="margin-top:14px;">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+          PERHITUNGAN EMPIRIS MAX POOLING (4 JENDELA 2×2)
+          <span class="tag" style="background:var(--amber-50);color:var(--amber-700);" id="poolTableTag">Filter #01</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
+          Empat jendela 2×2 non-overlapping (stride 2) menyapu patch 4×4 dan mengambil nilai maksimum dari 4 nilai sel.
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;font-size:11px;border-collapse:collapse;" class="param-table">
+            <thead>
+              <tr style="background:var(--bg-subtle,#f8fafc);color:var(--text-secondary);text-align:left;">
+                <th style="padding:6px;">Jendela 2×2</th>
+                <th style="padding:6px;">4 Nilai Masukan (X)</th>
+                <th style="padding:6px;">Operasi Max</th>
+                <th style="padding:6px;text-align:right;">Nilai Output (y)</th>
+              </tr>
+            </thead>
+            <tbody id="poolCalcRows"></tbody>
+          </table>
+        </div>
+
+        <!-- AKORDION 1: RINCIAN OPERASI MAX POOLING -->
+        <details style="margin-top:12px;background:var(--bg,#fafafa);border:1px solid var(--border-strong,#cbd5e1);border-radius:var(--radius);padding:8px 12px;font-size:11px;color:var(--text-secondary);">
+          <summary style="font-weight:700;color:var(--text-primary);cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;">
+            <span>📐 Lihat Rincian 4 Operasi Max Pooling Eksplisit (Windowing → Max Selection → Downsampling)</span>
+          </summary>
+          <div id="poolMathDetails" style="margin-top:10px;display:flex;flex-direction:column;gap:12px;border-top:1px dashed var(--border-strong,#cbd5e1);padding-top:12px;">
+          </div>
+        </details>
+
+        <!-- AKORDION 2: SILSILAH ASAL-USUL DATA -->
+        <details style="margin-top:10px;background:var(--bg,#fafafa);border:1px solid var(--border-strong,#cbd5e1);border-radius:var(--radius);padding:8px 12px;font-size:11px;color:var(--text-secondary);">
+          <summary style="font-weight:700;color:var(--text-primary);cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;">
+            <span>📥 Peta Asal-Usul &amp; Silsilah Seluruh Nilai Data Max Pooling</span>
+          </summary>
+          <div id="poolLineageDetails" style="margin-top:10px;line-height:1.6;border-top:1px dashed var(--border-strong,#cbd5e1);padding-top:10px;">
+          </div>
+        </details>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="card-title">PARAMETER POOLING — 3 TAHAP BERURUTAN</div>
+        <table class="param-table">
+          <tr><td>Metode</td><td>Max Pooling, window 2×2, stride 2</td></tr>
+          <tr><td>Pool1</td><td>224×224×32 → 112×112×32</td></tr>
+          <tr><td>Pool2</td><td>112×112×64 → 56×56×64</td></tr>
+          <tr><td>Pool3</td><td>56×56×128 → 28×28×128</td></tr>
+          <tr><td>Output akhir ke GAP</td><td>28 × 28 × 128</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+          FEATURE MAP SETELAH POOLING
+          <span class="tag" style="background:var(--amber-50);color:var(--amber-700);">32 FILTER</span>
+        </div>
+        <div class="fmap-wrap" id="poolFmaps"></div>
+        <div class="pb-wrap" style="margin-top:12px;">
+          <div class="pb-label"><span>Reduksi dimensi</span><span style="color:var(--amber-500);font-weight:600;">75%</span></div>
+          <div class="pb-track"><div class="pb-fill" style="width:75%;background:var(--amber-500);"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-secondary" onclick="goTo(2)">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Kembali
+    </button>
+    <button class="btn btn-primary" onclick="goTo(4)">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg> Lanjut ke Global Average Pooling
+    </button>
+  </div>
+</div>

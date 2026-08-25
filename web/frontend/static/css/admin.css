@@ -1,0 +1,44 @@
+/* ============================================================
+   admin.css — Gaya tambahan khusus halaman admin.html & report.html
+   Memakai variabel warna & komponen dasar dari style.css supaya
+   konsisten dengan tampilan petani.
+   ============================================================ */
+
+.big-num { font-size: 28px; font-weight: 700; color: var(--purple-700); margin-top: 4px; }
+
+.class-count-box {
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 14px; text-align: center;
+}
+.class-count-box .cc-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.class-count-box .cc-val { font-size: 20px; font-weight: 700; color: var(--purple-600); margin-top: 2px; }
+
+.pipeline-doc-step {
+  display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--text-secondary);
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.pipeline-doc-step:last-child { border-bottom: none; }
+.pipeline-doc-step span {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--purple-100);
+  color: var(--purple-700); font-weight: 700; font-size: 11px; display: flex; align-items: center;
+  justify-content: center;
+}
+
+/* confusion matrix */
+.cm-table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.cm-table th, .cm-table td { padding: 8px 10px; text-align: center; border: 1px solid var(--border); }
+.cm-table th { background: var(--bg); color: var(--text-secondary); font-weight: 600; }
+.cm-table td.cm-cell { font-weight: 700; color: white; }
+.cm-table td.cm-axis-label { background: var(--bg); font-weight: 600; color: var(--text-secondary); text-align: right; }
+.cm-corner { background: var(--surface) !important; border: none !important; }
+
+/* upload zone drag state reused from style.css .upload-zone, extend a bit */
+#zipZone.drag { border-color: var(--purple-600); background: var(--purple-100); }
+
+/* progress spinner */
+.spinner {
+  width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--purple-100);
+  border-top-color: var(--purple-600); display: inline-block; animation: spin .7s linear infinite;
+  vertical-align: -2px; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Pelatihan Model | Klasifikasi Penyakit Bawang Merah</title>
+  <meta name="api-base" content="http://localhost:8000">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="static/css/pipeline.css">
+  <link rel="stylesheet" href="static/css/admin.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo" style="background:var(--amber-500);">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.1-3-3-3.6 3.6"/></svg>
+      </div>
+      <div>
+        <div class="topbar-title">Dokumentasi &amp; Laporan Pelatihan</div>
+        <div class="topbar-sub">Ringkasan proses CNN sejak data masuk hingga model jadi</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <a href="admin.html" class="btn btn-secondary" style="text-decoration:none;">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Panel Admin
+      </a>
+      <button class="btn btn-secondary" onclick="adminLogout()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Keluar
+      </button>
+    </div>
+  </div>
+
+  <div class="page" style="max-width:1080px;">
+
+    <div id="emptyState" class="notice warning" style="display:none;">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div class="notice-text">Belum ada laporan pelatihan. Unggah dataset dan latih model terlebih dahulu di
+        <a href="admin.html" style="color:var(--amber-700);font-weight:600;">Panel Admin</a>.</div>
+    </div>
+
+    <div id="reportBody" style="display:none;">
+
+      <!-- ringkasan -->
+      <div class="grid3 section-gap">
+        <div class="card"><div class="card-title">Akurasi Data Uji</div><div class="big-num" id="rAcc">—</div></div>
+        <div class="card"><div class="card-title">Total Gambar Dataset</div><div class="big-num" id="rTotal">—</div></div>
+        <div class="card"><div class="card-title">Jumlah Kelas</div><div class="big-num" id="rClasses">—</div></div>
+      </div>
+
+      <div class="page-desc" style="margin-top:8px;color:var(--text-muted);font-size:12px;" id="rTrainedAt"></div>
+
+      <!-- konfigurasi pelatihan yang benar-benar dipakai (otomatis oleh sistem, bukan diatur manual) -->
+      <div class="card section-gap">
+        <div class="card-title">Konfigurasi Pelatihan yang Dipakai</div>
+        <div class="page-desc" style="margin-bottom:14px;">
+          Ditentukan <strong>otomatis oleh sistem</strong> berdasarkan ukuran dataset — bukan diisi
+          manual oleh admin (berbeda dari alat seperti Teachable Machine).
+        </div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div class="stat-box"><div class="stat-val" id="rEpochs">—</div><div class="stat-lbl">Epoch dipakai</div></div>
+          <div class="stat-box"><div class="stat-val" id="rBatch">—</div><div class="stat-lbl">Batch size</div></div>
+          <div class="stat-box"><div class="stat-val" id="rLr">—</div><div class="stat-lbl">Learning rate</div></div>
+        </div>
+        <div class="notice info" style="margin-top:14px;">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="notice-text" id="rHpReasoning"></div>
+        </div>
+      </div>
+
+      <!-- proses CNN ringkas -->
+      <div class="card section-gap">
+        <div class="card-title">Bagaimana Model Ini Dihasilkan</div>
+        <div class="pipeline-doc">
+          <div class="pipeline-doc-step"><span>1</span>Dataset diunggah sekali (folder per kelas) &amp; otomatis dibagi 80% latih / 10% validasi / 10% uji.</div>
+          <div class="pipeline-doc-step"><span>2</span>Augmentasi otomatis (flip, rotasi, zoom) memperbanyak variasi visual dari data yang sama.</div>
+          <div class="pipeline-doc-step"><span>3</span>CNN belajar lewat blok Konvolusi → ReLU → Pooling berulang, lalu Global Average Pooling → Fully Connected → Softmax.</div>
+          <div class="pipeline-doc-step"><span>4</span>Training berhenti otomatis (early stopping) begitu akurasi validasi berhenti membaik, mencegah overfitting.</div>
+          <div class="pipeline-doc-step"><span>5</span>Model dievaluasi ke data uji yang belum pernah dilihat, hasilnya dirangkum di bawah ini.</div>
+        </div>
+      </div>
+
+      <!-- grafik training -->
+      <div class="grid2 section-gap">
+        <div class="card">
+          <div class="card-title">Kurva Akurasi per Epoch</div>
+          <div class="chart-wrap"><canvas id="chartAcc"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Kurva Loss per Epoch</div>
+          <div class="chart-wrap"><canvas id="chartLoss"></canvas></div>
+        </div>
+      </div>
+
+      <!-- confusion matrix -->
+      <div class="card section-gap">
+        <div class="card-title">Confusion Matrix (Data Uji)</div>
+        <div id="confMatrixWrap"></div>
+      </div>
+
+      <!-- per-class metrics -->
+      <div class="card section-gap">
+        <div class="card-title">Precision / Recall / F1-Score per Kelas</div>
+        <table class="param-table" id="perClassTable"></table>
+      </div>
+
+      <!-- dataset distribution -->
+      <div class="card section-gap">
+        <div class="card-title">Distribusi Dataset (Train / Val / Test)</div>
+        <div class="chart-wrap"><canvas id="chartDist"></canvas></div>
+      </div>
+
+      <!-- detail teknis (collapsed) -->
+      <details class="card section-gap">
+        <summary class="card-title" style="cursor:pointer;">Detail Teknis (epoch, batch size, learning rate) — klik untuk buka</summary>
+        <table class="param-table" id="techTable" style="margin-top:10px;"></table>
+        <div class="notice info" style="margin-top:12px;">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="notice-text" id="techReasoning"></div>
+        </div>
+      </details>
+
+    </div>
+  </div>
+
+  <script src="static/js/admin-auth.js"></script>
+  <script src="static/js/report.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<div class="page active" id="page4">
+  <div class="page-header">
+    <div class="page-eyebrow">Tahap 5 dari 7</div>
+    <div class="page-title">Global Average Pooling (GAP)</div>
+    <div class="page-desc">Setelah melewati ekstraktor fitur konvolusi, tensor 3D (7×7×1280) diringkas menjadi vektor 1D dengan 1.280 elemen — satu nilai rata-rata per feature map. Pendekatan ini menggantikan flattening konvensional agar jumlah parameter pada lapisan berikutnya jauh lebih kecil.</div>
+  </div>
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-title">CARA KERJA GLOBAL AVERAGE POOLING (GAP)</div>
+        <div class="relu-formula">y = (1 / 49) ∑ X<sub>7×7</sub></div>
+        <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:-8px;margin-bottom:10px;">
+          Global Average Pooling merata-ratakan seluruh 49 sel piksel (7×7) dari satu feature map menjadi <b>satu nilai skalar tunggal</b> per channel.
+        </div>
+
+        <!-- PANDUAN CARA PAKAI RUMUS GAP -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:11.5px;color:#334155;line-height:1.6;">
+          <div style="font-weight:700;color:#1E293B;font-size:12px;margin-bottom:6px;">💡 Cara Menggunakan Rumus GAP Ini (Rincian Hasil Perhitungan):</div>
+          <b>Langkah 1 — Kumpulkan 49 Piksel (7×7):</b> Ambil matriks sel $7 \times 7$ piksel dari 1 channel feature map hasil konvolusi.<br/>
+          &nbsp;&nbsp;• <span id="gapStep1Text"><b>Data Asli Model:</b> Channel #0001 memuat 49 piksel aktivasi <code>[X₁, X₂, ..., X₄₉]</code></span><br/>
+          <b>Langkah 2 — Penjumlahan Spasial (Σ):</b> Jumlahkan seluruh 49 sel piksel pada channel tersebut.<br/>
+          &nbsp;&nbsp;• <span id="gapStep2Text"><b>Data Asli Model:</b> Total Σ (49 sel) = <code>29.890</code></span><br/>
+          <b>Langkah 3 — Pembagian Rata-rata (÷ 49):</b> Bagi hasil penjumlahan dengan total sel N=49.<br/>
+          &nbsp;&nbsp;• <span id="gapStep3Text"><b>Hasil Vektor 1D:</b> y = <code>29.890 ÷ 49 = <b style="color:#0f766e;">0.6100</b></code> (Elemen ke-1 Vektor GAP)</span>
+        </div>
+        <div class="card-title">Tensor 3D Masuk</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">7 × 7 × 1280 — tumpukan 1.280 feature map keluaran lapisan konvolusi</div>
+        <div class="flat-3d" id="flat3d"></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--text-secondary);">Setiap lapisan = satu feature map 7×7 piksel dari satu filter berbeda</div>
+      </div>
+
+      <!-- CARD 2: TABEL PERHITUNGAN EMPIRIS GAP -->
+      <div class="card" style="margin-top:14px;">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+          PERHITUNGAN EMPIRIS GAP (SAMPLE FEATURE MAP 7×7)
+          <span class="tag" style="background:var(--teal-50);color:var(--teal-700);" id="gapTableTag">Channel #0001</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
+          Proses agregasi spasial merata-ratakan 49 sel (7 baris × 7 kolom) feature map 3D menjadi 1 elemen skalar pada vektor output 1D.
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;font-size:11px;border-collapse:collapse;" class="param-table">
+            <thead>
+              <tr style="background:var(--bg-subtle,#f8fafc);color:var(--text-secondary);text-align:left;">
+                <th style="padding:6px;">Channel / Feature Map</th>
+                <th style="padding:6px;">Total Σ 49 Sel (7×7)</th>
+                <th style="padding:6px;">Pembagi (1 / 49)</th>
+                <th style="padding:6px;text-align:right;">Nilai Rata-rata (Vektor 1D)</th>
+              </tr>
+            </thead>
+            <tbody id="gapCalcRows"></tbody>
+          </table>
+        </div>
+
+        <!-- AKORDION 1: RINCIAN OPERASI GAP -->
+        <details style="margin-top:12px;background:var(--bg,#fafafa);border:1px solid var(--border-strong,#cbd5e1);border-radius:var(--radius);padding:8px 12px;font-size:11px;color:var(--text-secondary);">
+          <summary style="font-weight:700;color:var(--text-primary);cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;">
+            <span>📐 Lihat Rincian Operasi Perata-rataan Spasial GAP (Penjumlahan 49 Sel → Pembagian N → Skalar Vektor)</span>
+          </summary>
+          <div id="gapMathDetails" style="margin-top:10px;display:flex;flex-direction:column;gap:12px;border-top:1px dashed var(--border-strong,#cbd5e1);padding-top:12px;">
+          </div>
+        </details>
+
+        <!-- AKORDION 2: SILSILAH ASAL-USUL DATA -->
+        <details style="margin-top:10px;background:var(--bg,#fafafa);border:1px solid var(--border-strong,#cbd5e1);border-radius:var(--radius);padding:8px 12px;font-size:11px;color:var(--text-secondary);">
+          <summary style="font-weight:700;color:var(--text-primary);cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;">
+            <span>📥 Peta Asal-Usul &amp; Silsilah Data Vektor GAP (7×7×1280 → 1.280×1)</span>
+          </summary>
+          <div id="gapLineageDetails" style="margin-top:10px;line-height:1.6;border-top:1px dashed var(--border-strong,#cbd5e1);padding-top:10px;">
+          </div>
+        </details>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="card-title">Statistik Vektor</div>
+        <table class="param-table">
+          <tr><td>Dimensi input</td><td>7 × 7 × 1280</td></tr>
+          <tr><td>Metode</td><td>Rata-rata per channel (GAP)</td></tr>
+          <tr><td>Total elemen output</td><td>1.280</td></tr>
+          <tr><td>Nilai minimum</td><td>0.00 (ReLU)</td></tr>
+          <tr><td>Nilai maksimum</td><td id="flatMax">3.74</td></tr>
+          <tr><td>Rata-rata</td><td id="flatMean">0.61</td></tr>
+          <tr><td>Sparsity (nilai 0)</td><td id="flatSparsity">29%</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title">Visualisasi Vektor 1D Output</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">Sampel 60 nilai pertama dari 1.280 total nilai</div>
+        <div class="vec-vis" id="vecVis"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--text-muted);">
+          <span>Channel ke-1</span><span>← <span id="flatLength">1.280</span> channel →</span><span>Channel terakhir</span>
+        </div>
+        <div class="pb-wrap" style="margin-top:12px;">
+          <div class="pb-label"><span>Panjang vektor</span><span style="font-weight:600;">1.280 elemen</span></div>
+          <div class="pb-track"><div class="pb-fill" style="width:100%;background:var(--teal-500);"></div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <div class="card-title">Proses Transformasi</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;">
+          <div style="background:var(--purple-100);border-radius:6px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--purple-700);">7×7×1280</div>
+          <div style="font-size:14px;color:var(--text-muted);">→</div>
+          <div style="font-size:12px;color:var(--text-secondary);">GAP (rata-rata H×W)</div>
+          <div style="font-size:14px;color:var(--text-muted);">→</div>
+          <div style="background:var(--teal-100);border-radius:6px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--teal-700);">1.280 × 1</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:8px;line-height:1.6;">Setiap feature map 7×7 dari 1.280 lapisan dirata-ratakan menjadi satu nilai tunggal, sehingga dihasilkan vektor sepanjang 1.280 elemen.</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-secondary" onclick="goTo(3)">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Kembali
+    </button>
+    <button class="btn btn-primary" onclick="goTo(5)">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg> Lanjut ke Fully Connected
+    </button>
+  </div>
+</div>

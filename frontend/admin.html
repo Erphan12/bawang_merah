@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Pelatihan Model | Klasifikasi Penyakit Bawang Merah</title>
+  <meta name="api-base" content="http://localhost:8000">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="static/css/pipeline.css">
+  <link rel="stylesheet" href="static/css/admin.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo" style="background:var(--amber-500);">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9c.14.36.4.66.73.85.3.18.66.27 1.02.27H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </div>
+      <div>
+        <div class="topbar-title">Panel Admin — Pelatihan Model</div>
+        <div class="topbar-sub">Halaman internal, tidak ditautkan dari tampilan petani</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-secondary" id="btnToggleHistory" onclick="toggleHistorySection()">
+        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.1-3-3-3.6 3.6"/></svg>
+        Lihat Riwayat Prediksi
+      </button>
+      <a href="index.html" class="btn btn-secondary" style="text-decoration:none;">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Kembali ke situs
+      </a>
+      <button class="btn btn-secondary" onclick="adminLogout()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Keluar
+      </button>
+    </div>
+  </div>
+
+  <div class="page" style="max-width:960px;">
+
+    <div class="notice info">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div class="notice-text">
+        Halaman ini hanya untuk admin/peneliti. Petani yang mengakses situs utama
+        <strong>tidak akan pernah melihat</strong> istilah epoch, batch size, atau learning rate —
+        semua itu ditentukan otomatis oleh sistem berdasarkan ukuran dataset yang diunggah di sini,
+        lalu berjalan di latar belakang.
+      </div>
+    </div>
+
+    <!-- ============= STATUS KELAS AKTIF ============= -->
+    <div class="card section-gap">
+      <div class="card-title">Status Model Saat Ini</div>
+      <div id="statusSummary" style="display:flex;gap:24px;flex-wrap:wrap;">
+        <div class="stat-box"><div class="stat-val" id="sumClasses">—</div><div class="stat-lbl">Kelas aktif</div></div>
+        <div class="stat-box"><div class="stat-val" id="sumSource">—</div><div class="stat-lbl">Sumber</div></div>
+        <div class="stat-box"><div class="stat-val" id="sumTrainedAt">—</div><div class="stat-lbl">Terakhir dilatih</div></div>
+      </div>
+    </div>
+
+    <!-- ============= UPLOAD DATASET ============= -->
+    <div class="card section-gap">
+      <div class="card-title">Langkah 1 — Unggah Dataset (cukup sekali)</div>
+      <div class="page-desc" style="margin-bottom:14px;">
+        Siapkan satu file <strong>.zip</strong> berisi folder per kelas penyakit, contoh:
+        <code>dataset.zip → Trotol/*.jpg, Moler/*.jpg</code>. Nama folder otomatis
+        menjadi nama kelas — tidak perlu diketik ulang di mana pun. Upload berikutnya akan
+        <strong>menggantikan</strong> dataset lama (biarkan sistem mempelajari versi terbaru).
+        Foto boleh diunggah apa adanya langsung dari kamera/HP (resolusi tinggi) — server akan
+        <strong>mengompres & mengecilkan gambar secara otomatis</strong> sebelum training, jadi
+        tidak perlu dikompres manual dulu.
+      </div>
+      <input type="file" id="zipInput" accept=".zip" style="display:none" onchange="handleZipSelect(event)">
+      <label for="zipInput" id="zipZone" class="upload-zone">
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        </div>
+        <div class="upload-title">Seret & lepas dataset.zip di sini</div>
+        <div class="upload-sub">atau <span class="upload-link" onclick="event.stopPropagation();document.getElementById('zipInput').click()">pilih dari perangkat</span></div>
+        <div class="upload-sub" style="margin-top:6px;">.ZIP · folder per kelas · maks. 2 GB · gambar dikompres otomatis</div>
+      </label>
+      <div id="datasetSummary" style="display:none;margin-top:16px;">
+        <div class="notice success">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="notice-text">Dataset berhasil diunggah. Sistem mendeteksi kelas berikut:</div>
+        </div>
+        <div id="classCounts" class="grid3" style="margin-top:12px;"></div>
+        <div id="compressionSummary" style="display:none;margin-top:12px;" class="notice info"></div>
+      </div>
+    </div>
+
+    <!-- ============= LATIH MODEL ============= -->
+    <div class="card section-gap">
+      <div class="card-title">Langkah 2 — Latih Model</div>
+      <div class="page-desc" style="margin-bottom:14px;">
+        Cukup satu tombol. Epoch, batch size, dan learning rate dipilih otomatis berdasarkan jumlah
+        gambar, lalu training berjalan di latar belakang server dan berhenti sendiri (early stopping)
+        begitu model berhenti membaik — supaya tidak overfitting dan tidak perlu diawasi manual.
+      </div>
+      <button class="btn btn-primary" id="btnTrain" onclick="startTraining()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Latih Model Sekarang
+      </button>
+
+      <div id="trainProgress" style="display:none;margin-top:18px;">
+        <div class="pb-wrap">
+          <div class="pb-label"><span id="trainMsg">Menyiapkan...</span><span id="trainPct" style="font-weight:600;">0%</span></div>
+          <div class="pb-track"><div class="pb-fill" id="trainFill" style="width:0%;background:var(--purple-600);"></div></div>
+        </div>
+      </div>
+
+      <div id="trainDone" class="notice success" style="display:none;margin-top:14px;">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="notice-text">
+          <span id="trainDoneMsg"></span>
+          Situs petani otomatis memakai model baru ini mulai sekarang, tanpa perlu restart.
+          <a href="report.html" style="color:var(--teal-700);font-weight:600;">Lihat laporan hasil pelatihan →</a>
+        </div>
+      </div>
+      <div id="trainError" class="notice warning" style="display:none;margin-top:14px;">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div class="notice-text" id="trainErrorMsg"></div>
+      </div>
+    </div>
+
+    <div class="card section-gap" id="reportLinkCard" style="display:none;">
+      <div class="card-title">Dokumentasi Hasil Pelatihan</div>
+      <div class="page-desc" style="margin-bottom:12px;">
+        Grafik akurasi/loss, confusion matrix, precision/recall/F1 per kelas, dan detail teknis
+        (epoch, batch size, learning rate yang benar-benar dipakai) — untuk lampiran dokumentasi.
+      </div>
+      <a href="report.html" class="btn btn-secondary" style="text-decoration:none;display:inline-flex;">
+        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.1-3-3-3.6 3.6"/></svg>
+        Buka Laporan
+      </a>
+    </div>
+
+    <!-- ============= AKUN ADMIN ============= -->
+    <div class="card section-gap">
+      <div class="card-title">Akun Admin</div>
+      <div class="page-desc" style="margin-bottom:14px;">
+        Login saat ini sebagai <strong id="accCurrentUsername">—</strong>. Ganti username dan/atau
+        password kapan saja — hanya admin yang tahu password saat ini yang bisa melakukannya.
+      </div>
+      <button class="btn btn-secondary" onclick="toggleAccountForm()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9c.14.36.4.66.73.85.3.18.66.27 1.02.27H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Ubah Username &amp; Password
+      </button>
+
+      <form id="accountFormBox" style="display:none;margin-top:16px;max-width:420px;" onsubmit="return submitAccountForm(event)">
+        <div class="field" style="margin-bottom:12px;">
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Password saat ini <span style="color:var(--red-500);">*</span></label>
+          <input type="password" id="accCurrentPassword" required autocomplete="current-password"
+                 style="width:100%;padding:9px 12px;border-radius:var(--radius);border:1px solid var(--border-strong);font-size:14px;font-family:inherit;">
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Username baru <span style="color:var(--text-muted);font-weight:400;">(kosongkan jika tidak diganti)</span></label>
+          <input type="text" id="accNewUsername" autocomplete="username"
+                 style="width:100%;padding:9px 12px;border-radius:var(--radius);border:1px solid var(--border-strong);font-size:14px;font-family:inherit;">
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Password baru <span style="color:var(--text-muted);font-weight:400;">(min. 6 karakter, kosongkan jika tidak diganti)</span></label>
+          <input type="password" id="accNewPassword" autocomplete="new-password"
+                 style="width:100%;padding:9px 12px;border-radius:var(--radius);border:1px solid var(--border-strong);font-size:14px;font-family:inherit;">
+        </div>
+        <div class="field" style="margin-bottom:14px;">
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Konfirmasi password baru</label>
+          <input type="password" id="accNewPasswordConfirm" autocomplete="new-password"
+                 style="width:100%;padding:9px 12px;border-radius:var(--radius);border:1px solid var(--border-strong);font-size:14px;font-family:inherit;">
+        </div>
+
+        <div class="notice warning" id="accountError" style="display:none;">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="notice-text"></div>
+        </div>
+        <div class="notice success" id="accountSuccess" style="display:none;">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="notice-text">Berhasil diperbarui. Mengalihkan ke halaman login...</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="accSubmitBtn" style="margin-top:6px;">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Simpan Perubahan
+        </button>
+      </form>
+    </div>
+
+    <!-- ============= RIWAYAT PREDIKSI (DATABASE SQLITE) ============= -->
+    <div class="card section-gap" id="historySection" style="display:none;">
+      <div class="card-title">Riwayat Prediksi (predictions.db)</div>
+      <div class="page-desc" style="margin-bottom:14px;">
+        Setiap kali petani melakukan deteksi, hasilnya dicatat otomatis ke database SQLite
+        (<code>predictions.db</code>) lewat modul <code>db.py</code>. Tabel di bawah ini membaca
+        langsung dari database tersebut lewat endpoint <code>/api/history</code>.
+      </div>
+
+      <div id="historyStats" style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px;">
+        <div class="stat-box"><div class="stat-val" id="histTotal">—</div><div class="stat-lbl">Total prediksi</div></div>
+        <div id="histDistribution" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="loadHistory()">
+          <svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Muat Ulang
+        </button>
+        <button class="btn btn-secondary" onclick="clearHistory()">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+          Hapus Riwayat
+        </button>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="cm-table" id="historyTable" style="text-align:left;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Waktu</th>
+              <th>Nama File</th>
+              <th>Kelas Prediksi</th>
+              <th>Confidence</th>
+              <th>Mode</th>
+              <th>Ukuran File</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-secondary);padding:16px;">Memuat riwayat...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="historyEmpty" class="notice info" style="display:none;margin-top:12px;">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div class="notice-text">Belum ada riwayat prediksi. Riwayat akan muncul setelah petani melakukan deteksi di halaman utama.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="static/js/admin-auth.js"></script>
+  <script src="static/js/admin.js"></script>
+</body>
+</html>

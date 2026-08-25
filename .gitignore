@@ -1,0 +1,21 @@
+# Python cache and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Local datasets and generated reports
+dataset/
+dataset_split/
+reports/*
+!reports/.gitkeep
+
+# Archives and local bundles
+*.zip
+
+# Local secrets and editor files
+.env
+.env.*
+!.env.example
+.vscode/
