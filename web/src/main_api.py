@@ -1,4 +1,5 @@
 import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
 import io
 import json
 import uuid
@@ -122,13 +123,24 @@ def load_model_and_classes():
     print("MEMUAT MODEL DAN DAFTAR KELAS...")
     print("=" * 50)
 
-    # 1. Load Model
+    # 1. Load Model (Dengn fallback compile=False & custom_objects untuk mencegah error Keras 2/3 DepthwiseConv2D)
     if os.path.exists(MODEL_PATH):
         try:
-            model = tf.keras.models.load_model(MODEL_PATH)
+            model = tf.keras.models.load_model(MODEL_PATH, compile=False)
             print(f"Model berhasil dimuat dari: {MODEL_PATH}")
         except Exception as e:
-            print(f"ERROR memuat model: {e}")
+            print(f"Percobaan 1 load_model gagal ({e}), mencoba fallback custom_objects/tf_keras...")
+            try:
+                custom_objects = {"DepthwiseConv2D": tf.keras.layers.DepthwiseConv2D}
+                model = tf.keras.models.load_model(MODEL_PATH, custom_objects=custom_objects, compile=False)
+                print(f"Model berhasil dimuat (fallback custom_objects) dari: {MODEL_PATH}")
+            except Exception as e2:
+                try:
+                    import tf_keras
+                    model = tf_keras.models.load_model(MODEL_PATH, compile=False)
+                    print(f"Model berhasil dimuat via tf_keras dari: {MODEL_PATH}")
+                except Exception as e3:
+                    print(f"ERROR memuat model: {e3}")
     else:
         print(f"WARNING: File model tidak ditemukan di {MODEL_PATH}!")
 

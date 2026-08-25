@@ -1,5 +1,6 @@
 # Machine Learning & Computer Vision
 tensorflow>=2.10.0
+tf-keras>=2.15.0
 Pillow>=9.0.0
 numpy>=1.21.0
 scikit-learn>=1.0.0
