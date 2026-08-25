@@ -11,11 +11,21 @@ dataset_split/
 reports/*
 !reports/.gitkeep
 
-# Archives and local bundles
+# Heavy document binaries in dokumen/ (Ignore .pdf & .docx, keep .md docs)
+dokumen/*.pdf
+dokumen/*.docx
+dokumen/*.xlsx
+!dokumen/*.md
+
+# Archives, model weights and local bundles
 *.zip
+*.tar.gz
+*.rar
 
 # Local secrets and editor files
 .env
 .env.*
 !.env.example
 .vscode/
+.idea/
+*.swp
