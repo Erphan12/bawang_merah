@@ -841,7 +841,7 @@ function renderPoolLeftCardOnly() {
         ${detailCardsHtml}
       </div>
       <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;font-size:11px;color:#92400e;">
-        <b>💡 Efek Downsampling Max Pooling:</b> Ukuran spasial feature map berkurang 50% di lebar & tinggi ($224 x 224 \rightarrow 112 x 112$), sehingga total piksel menyusut 75% ($16 \rightarrow 4$ sel pada patch lokal) tanpa kehilangan sinyal fitur terkuat.
+        <b>💡 Efek Downsampling Max Pooling:</b> Ukuran spasial feature map berkurang 50% di lebar & tinggi (224 x 224 → 112 x 112), sehingga total piksel menyusut 75% (16 → 4 sel pada patch lokal) tanpa kehilangan sinyal fitur terkuat.
       </div>
     `;
   }
@@ -856,7 +856,7 @@ function renderPoolLeftCardOnly() {
         • <b>2. Pembentukan Jendela 2x2 (Stride 2):</b> Patch 4x4 dibagi menjadi 4 region terpisah tanpa tumpang tindih.<br/>
         • <b>3. Pemilihan Sinyal Maksimum:</b> Membuang 3 piksel dengan respons lebih lemah dan mempertahankan 1 piksel dengan aktivasi tertinggi.<br/>
         • <b>4. Matriks Output (2x2 Output):</b> Menghasilkan 4 nilai puncak <code>[${maxVals.map(v => v.toFixed(2)).join(', ')}]</code> yang meneruskan fitur paling dominan ke blok konvolusi berikutnya.<br/>
-        • <b>5. Tahapan Hirarki Pooling Model:</b> Pool1 ($224\rightarrow112$) $\rightarrow$ Pool2 ($112\rightarrow56$) $\rightarrow$ Pool3 ($56\rightarrow28x28x128$).
+        • <b>5. Tahapan Hirarki Pooling Model:</b> Pool1 (224 → 112) → Pool2 (112 → 56) → Pool3 (56 → 28x28x128).
       </div>
     `;
   }
@@ -979,7 +979,7 @@ function renderGapLeftCardOnly() {
         <code>y = ${sum49_0.toFixed(3)} ÷ 49 = <b style="color:#0f766e;font-size:12px;">${mean49_0.toFixed(4)}</b></code>
       </div>
       <div style="background:#ccfbf1;border:1px solid #99f6e4;border-radius:8px;padding:8px 10px;font-size:11px;color:#115e59;">
-        <b>💡 Mengapa GAP Digunakan?</b> GAP mengubah tensor $7 x 7 x 1280$ ($62.720$ sel) menjadi vektor $1.280 x 1$, menghilangkan kebutuhan flattening berukuran sangat besar ($62.720$ neuron) dan mencegah *overfitting*.
+        <b>💡 Mengapa GAP Digunakan?</b> GAP mengubah tensor 7 x 7 x 1280 (62.720 sel) menjadi vektor 1.280 x 1, menghilangkan kebutuhan flattening berukuran sangat besar (62.720 neuron) dan mencegah *overfitting*.
       </div>
     `;
   }
@@ -990,9 +990,9 @@ function renderGapLeftCardOnly() {
     lineageEl.innerHTML = `
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;">
         <div style="font-weight:700;color:#1E293B;margin-bottom:6px;">🔍 Peta Jalur Angka Global Average Pooling:</div>
-        • <b>1. Tensor Input 3D:</b> Tumpukan 1.280 feature map berukuran $7 x 7$ piksel dari ekstraktor konvolusi.<br/>
-        • <b>2. Agregasi Spasial:</b> Setiap $7 x 7$ feature map dirata-ratakan independen per channel.<br/>
-        • <b>3. Vektor Output 1D:</b> Menghasilkan vektor presisi sepanjang $1.280$ elemen yang dikirim ke lapisan Fully Connected (Dense).<br/>
+        • <b>1. Tensor Input 3D:</b> Tumpukan 1.280 feature map berukuran 7 x 7 piksel dari ekstraktor konvolusi.<br/>
+        • <b>2. Agregasi Spasial:</b> Setiap 7 x 7 feature map dirata-ratakan independen per channel.<br/>
+        • <b>3. Vektor Output 1D:</b> Menghasilkan vektor presisi sepanjang 1.280 elemen yang dikirim ke lapisan Fully Connected (Dense).<br/>
         • <b>4. Statistik Model Foto Anda:</b> Nilai Max: <code>${fs && fs.max != null ? fs.max.toFixed(2) : '3.74'}</code> | Mean: <code>${fs && fs.mean != null ? fs.mean.toFixed(2) : '0.61'}</code> | Sparsity: <code>${fs && fs.sparsity != null ? fs.sparsity + '%' : '29%'}</code>.
       </div>
     `;
@@ -1201,11 +1201,11 @@ function initFC() {
       lineageEl.innerHTML = `
         <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;">
           <div style="font-weight:700;color:#1E293B;margin-bottom:6px;">🔍 Peta Jalur Keputusan Klasifikasi Dari Piksel ke Diagnosa Penyakit:</div>
-          • <b>1. Piksel Asli Foto:</b> Citra daun bawang $224 x 224 x 3$ dinormalisasi ke rentang $[0.0, 1.0]$.<br/>
+          • <b>1. Piksel Asli Foto:</b> Citra daun bawang 224 x 224 x 3 dinormalisasi ke rentang [0.0, 1.0].<br/>
           • <b>2. Ekstraksi Fitur Konvolusi:</b> Menyaring pola visual (tepi, bercak, tekstur) melalui 32 filter Conv1.<br/>
-          • <b>3. Aktivasi Non-linear (ReLU):</b> Menghapus nilai negatif ($<0 \rightarrow 0$) untuk memperjelas batas fitur.<br/>
-          • <b>4. Reduksi Spasial (Max Pooling):</b> Meringkas wilayah $2 x 2$ piksel menjadi 1 sinyal terkuat.<br/>
-          • <b>5. Global Average Pooling (GAP):</b> Mengagregasi tensor 3D $7 x 7 x 1280$ menjadi vektor 1D sepanjang 1.280 elemen.<br/>
+          • <b>3. Aktivasi Non-linear (ReLU):</b> Menghapus nilai negatif (< 0 → 0) untuk memperjelas batas fitur.<br/>
+          • <b>4. Reduksi Spasial (Max Pooling):</b> Meringkas wilayah 2 x 2 piksel menjadi 1 sinyal terkuat.<br/>
+          • <b>5. Global Average Pooling (GAP):</b> Mengagregasi tensor 3D 7 x 7 x 1280 menjadi vektor 1D sepanjang 1.280 elemen.<br/>
           • <b>6. Klasifikasi Dense Layer:</b> Menghubungkan 1.280 sinyal fitur ke 128 neuron tersembunyi dan 4 logit kelas output.<br/>
           • <b>7. Output Softmax:</b> Menghasilkan keputusan akhir prediksi kelas <b style="color:#6b21a8;">${predName}</b> dengan tingkat keyakinan <b>${maxPct.toFixed(2)}%</b>.
         </div>
