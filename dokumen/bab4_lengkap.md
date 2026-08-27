@@ -20,7 +20,7 @@ Flowchart sistem menggambarkan alur aktivitas pengguna dalam berinteraksi dengan
 1. **Akses Antarmuka:** Pengguna membuka aplikasi web klasifikasi penyakit bawang merah pada peramban (*browser*).
 2. **Pengunggahan Masukan:** Pengguna memasukkan gambar daun bawang merah melalui fitur unggah berkas (*drag and drop*) atau tangkapan kamera secara *real-time*.
 3. **Validasi Berkas:** Sistem memeriksa format berkas gambar (`.jpg`, `.jpeg`, `.png`, `.bmp`, `.webp`). Jika format tidak sesuai, sistem menampilkan pesan peringatan.
-4. **Pra-pemrosesan Otomatis:** Gambar yang valid diproses dengan mengubah ukurannya (*resizing*) menjadi $224 \times 224$ piksel serta menormalisasi nilai piksel ke rentang $[0, 1]$ (`rescale=1./255`).
+4. **Pra-pemrosesan Otomatis:** Gambar yang valid diproses dengan mengubah ukurannya (*resizing*) menjadi $224 x 224$ piksel serta menormalisasi nilai piksel ke rentang $[0, 1]$ (`rescale=1./255`).
 5. **Ekstraksi Fitur & Inferensi CNN:** Gambar diproses oleh model *Deep Learning* MobileNetV2 yang dihubungkan dengan lapisan *Global Average Pooling* (GAP), *Batch Normalization*, *Dropout*, *Dense Layer* 128 neuron, dan *Output Layer* *Softmax*.
 6. **Penyajikan & Penyimpanan:** Sistem menampilkan label hasil prediksi (Moler, Non Bawang, Sehat, atau Trotol) beserta nilai probabilitas kepercayaan (*confidence score*), menyimpan data sesi ke memori server (*SESSION_STORE*), dan menampilkan rekomendasi penanganan bagi petani.
 
@@ -35,7 +35,7 @@ Alur kerja arsitektur *Convolutional Neural Network* (CNN) yang diimplementasika
 **Gambar 4. 2 Diagram Arsitektur MobileNetV2 Transfer Learning**
 
 **Rincian Spesifikasi Arsitektur Model (`BawangMerah_MobileNetV2`):**
-1. **Input Layer:** Menerima matriks citra berdimensi $224 \times 224 \times 3$ (RGB).
+1. **Input Layer:** Menerima matriks citra berdimensi $224 x 224 x 3$ (RGB).
 2. **Base Model (MobileNetV2):** Menggunakan bobot *pre-trained* ImageNet dengan status *trainable = False* (dibekukan) agar pembacaan fitur dasar seperti tepi, garis, dan tekstur warna tetap stabil.
 3. **Global Average Pooling 2D:** Mengubah *feature map* 3D keluaran *base model* menjadi vektor 1D dengan menghitung nilai rata-rata tiap kanal.
 4. **Batch Normalization:** Menormalisasi aktivasi dari lapisan sebelumnya untuk mempercepat konvergensi dan menjaga stabilitas pelatihan.
@@ -64,7 +64,7 @@ Backend aplikasi dibangun menggunakan **FastAPI** (`src/main_api.py`), sebuah *f
   - `ReduceLROnPlateau`: Menurunkan *learning rate* sebesar faktor $0,2$ jika `val_loss` mengalami stagnasi selama 3 epoch.
 
 ### 3. NumPy & Pillow
-- **Pillow (PIL):** Digunakan untuk membuka berkas citra, mengubah ukuran (*resizing*) ke dimensi $224 \times 224$, serta melakukan konversi mode warna ke RGB.
+- **Pillow (PIL):** Digunakan untuk membuka berkas citra, mengubah ukuran (*resizing*) ke dimensi $224 x 224$, serta melakukan konversi mode warna ke RGB.
 - **NumPy:** Digunakan untuk manipulasi array numerik multidimensi, termasuk konversi piksel ke `float32` dan normalisasi nilai piksel dengan pembagian $255.0$.
 
 ### 4. In-Memory Session Storage (Dictionary Python)
@@ -122,7 +122,7 @@ Grafik pelatihan yang dihasilkan oleh modul `src/train_model.py` (tersimpan pada
 
 Evaluasi performa klasifikasi dilakukan secara empiris pada **300 data uji (*test set*)** yang tidak pernah dilibatkan selama proses pelatihan (`src/evaluate_model.py`).
 
-Hasil perhitungan *Confusion Matrix* $4 \times 4$ ditunjukkan pada Tabel 4.2.
+Hasil perhitungan *Confusion Matrix* $4 x 4$ ditunjukkan pada Tabel 4.2.
 
 #### Tabel 4. 2 Confusion Matrix Prediksi Model pada Data Test (300 Sampel)
 
@@ -168,13 +168,13 @@ Berikut disajikan perhitungan matematis terperinci, presisi, dan komprehensif la
 ---
 
 ### a. Normalisasi Citra Masukan ($I \rightarrow I_{\text{norm}}$)
-Citra masukan daun bawang merah berukuran $224 \times 224 \times 3$ piksel memuat rentang nilai intensitas warna RGB $[0, 255]$. Pada pra-pemrosesan citra, nilai piksel dinormalisasi ke rentang kontinu $[0.0, 1.0]$ menggunakan persamaan pembagian:
+Citra masukan daun bawang merah berukuran $224 x 224 x 3$ piksel memuat rentang nilai intensitas warna RGB $[0, 255]$. Pada pra-pemrosesan citra, nilai piksel dinormalisasi ke rentang kontinu $[0.0, 1.0]$ menggunakan persamaan pembagian:
 
 $$
 X_{i, j} = \frac{\text{Channel}(i, j)}{255.0}
 $$
 
-Diambil sampel patch citra $3 \times 3$ piksel dari area pusat citra uji (`(126).jpg`, koordinat pusat $x=112, y=112$):
+Diambil sampel patch citra $3 x 3$ piksel dari area pusat citra uji (`(126).jpg`, koordinat pusat $x=112, y=112$):
 
 - **Piksel RGB Asli $[0, 255]$:**
   - Baris 1: $(1,1)=[168, 169, 157]$, $(1,2)=[164, 165, 152]$, $(1,3)=[168, 169, 156]$
@@ -204,25 +204,25 @@ $$
 Sesuai tampilan website pada **Tahap 2**, operasi konvolusi dihitung dengan rumus perkalian titik (*dot product*) elemen demi elemen antara matriks masukan $X$ dan matriks bobot kernel $W$:
 
 $$
-y = \sum (X_{i,j} \times W_{i,j})
+y = \sum (X_{i,j} x W_{i,j})
 $$
 
-Bobot asli kernel $3 \times 3$ untuk **Filter #1** ($W$) dari layer `Conv1` model MobileNetV2 (setelah merata-ratakan 3 kanal RGB) adalah:
+Bobot asli kernel $3 x 3$ untuk **Filter #1** ($W$) dari layer `Conv1` model MobileNetV2 (setelah merata-ratakan 3 kanal RGB) adalah:
 
 $$
 W = \begin{bmatrix} -0.19900 & -0.29629 & -0.07772 \\ +0.32279 & +0.42667 & +0.15698 \\ -0.10745 & -0.00619 & -0.07872 \end{bmatrix}
 $$
 
 **Penjabaran Perkalian 9 Sel Spasial secara Detail:**
-1. **Sel (1,1):** $0.6458 \times -0.19900 = \mathbf{-0.128507}$
-2. **Sel (1,2):** $0.6288 \times -0.29629 = \mathbf{-0.186296}$
-3. **Sel (1,3):** $0.6444 \times -0.07772 = \mathbf{-0.050088}$
-4. **Sel (2,1):** $0.6588 \times +0.32279 = \mathbf{+0.212659}$
-5. **Sel (2,2):** $0.6444 \times +0.42667 = \mathbf{+0.274963}$
-6. **Sel (2,3):** $0.6353 \times +0.15698 = \mathbf{+0.099730}$
-7. **Sel (3,1):** $0.6719 \times -0.10745 = \mathbf{-0.072195}$
-8. **Sel (3,2):** $0.6680 \times -0.00619 = \mathbf{-0.004133}$
-9. **Sel (3,3):** $0.6523 \times -0.07872 = \mathbf{-0.051350}$
+1. **Sel (1,1):** $0.6458 x -0.19900 = \mathbf{-0.128507}$
+2. **Sel (1,2):** $0.6288 x -0.29629 = \mathbf{-0.186296}$
+3. **Sel (1,3):** $0.6444 x -0.07772 = \mathbf{-0.050088}$
+4. **Sel (2,1):** $0.6588 x +0.32279 = \mathbf{+0.212659}$
+5. **Sel (2,2):** $0.6444 x +0.42667 = \mathbf{+0.274963}$
+6. **Sel (2,3):** $0.6353 x +0.15698 = \mathbf{+0.099730}$
+7. **Sel (3,1):** $0.6719 x -0.10745 = \mathbf{-0.072195}$
+8. **Sel (3,2):** $0.6680 x -0.00619 = \mathbf{-0.004133}$
+9. **Sel (3,3):** $0.6523 x -0.07872 = \mathbf{-0.051350}$
 
 **Penjumlahan Bertahap Seluruh Nilai Komponen:**
 - Total komponen negatif $= -0.128507 - 0.186296 - 0.050088 - 0.072195 - 0.004133 - 0.051350 = \mathbf{-0.492569}$
@@ -256,7 +256,7 @@ $$
 4. **Pembagian Normalisasi Standardized ($\hat{x}$):**
    $$\hat{x} = \frac{0.131545}{0.348592} = \mathbf{+0.377359}$$
 5. **Skala ($\gamma$) & Geseran ($\beta$):**
-   $$y_{\text{BN}} = (0.612176 \times 0.377359) + 2.255549 = 0.231010 + 2.255549 = \mathbf{+2.486559}$$
+   $$y_{\text{BN}} = (0.612176 x 0.377359) + 2.255549 = 0.231010 + 2.255549 = \mathbf{+2.486559}$$
 
 ---
 
@@ -275,14 +275,14 @@ $$
 
 ---
 
-### e. Max Pooling ($2 \times 2$, Stride 2)
-Sesuai tampilan website pada **Tahap 4**, operasi Max Pooling dihitung dengan rumus mengambil nilai maksimum pada jendela $2 \times 2$:
+### e. Max Pooling ($2 x 2$, Stride 2)
+Sesuai tampilan website pada **Tahap 4**, operasi Max Pooling dihitung dengan rumus mengambil nilai maksimum pada jendela $2 x 2$:
 
 $$
-y = \max(X_{2 \times 2})
+y = \max(X_{2 x 2})
 $$
 
-Menyapu patch matriks aktivasi $4 \times 4$ piksel ($M$) menggunakan 4 jendela non-overlapping berukuran $2 \times 2$ piksel untuk mereduksi dimensi spasial sebesar 75%:
+Menyapu patch matriks aktivasi $4 x 4$ piksel ($M$) menggunakan 4 jendela non-overlapping berukuran $2 x 2$ piksel untuk mereduksi dimensi spasial sebesar 75%:
 
 $$
 M = \begin{bmatrix} 
@@ -303,7 +303,7 @@ $$
 4. **Jendela 4 (Baris 3-4, Kolom 3-4):**
    $$\text{Elemen} = \{0.91, 0.18, 0.44, 0.73\} \implies \text{Nilai Maksimum} = \mathbf{0.91}$$
 
-**Matriks Hasil Reduksi ($4 \times 4 \rightarrow 2 \times 2$):**
+**Matriks Hasil Reduksi ($4 x 4 \rightarrow 2 x 2$):**
 
 $$
 M_{\text{pooled}} = \begin{bmatrix} 0.34 & 0.85 \\ 0.22 & 0.91 \end{bmatrix}
@@ -312,10 +312,10 @@ $$
 ---
 
 ### f. Global Average Pooling (GAP)
-Sesuai tampilan website pada **Tahap 5**, operasi Global Average Pooling merata-ratakan seluruh 49 sel piksel spasial ($7 \times 7$) dengan rumus:
+Sesuai tampilan website pada **Tahap 5**, operasi Global Average Pooling merata-ratakan seluruh 49 sel piksel spasial ($7 x 7$) dengan rumus:
 
 $$
-y = \frac{1}{49} \sum X_{7 \times 7}
+y = \frac{1}{49} \sum X_{7 x 7}
 $$
 
 **Penjabaran Perhitungan pada Channel #0001:**
@@ -330,16 +330,16 @@ Proses ini diulang secara konsisten untuk seluruh 1.280 kanal, membentuk **vekto
 ---
 
 ### g. Fully Connected Layer (Dense Layer 128 Neuron)
-Vektor GAP ($1280 \times 1$) dikalikan dengan matriks bobot Dense Layer ($W \in \mathbb{R}^{1280 \times 128}$) ditambah bias ($b \in \mathbb{R}^{128}$):
+Vektor GAP ($1280 x 1$) dikalikan dengan matriks bobot Dense Layer ($W \in \mathbb{R}^{1280 x 128}$) ditambah bias ($b \in \mathbb{R}^{128}$):
 
 $$
-z_m = \sum (X_i \times W_{i, m}) + b_m
+z_m = \sum (X_i x W_{i, m}) + b_m
 $$
 
 **Rincian Perhitungan Perkalian Titik Neuron #1 ($m=1$):**
-- $X_1 \times W_{1, 1} = 0.6100 \times 0.0015 = +0.000915$
-- $X_2 \times W_{2, 1} = 0.0000 \times 0.0443 = 0.000000$
-- $X_3 \times W_{3, 1} = 0.5200 \times -0.0404 = -0.021008$
+- $X_1 x W_{1, 1} = 0.6100 x 0.0015 = +0.000915$
+- $X_2 x W_{2, 1} = 0.0000 x 0.0443 = 0.000000$
+- $X_3 x W_{3, 1} = 0.5200 x -0.0404 = -0.021008$
 - $\dots$ *(diteruskan hingga elemen ke-1280)*
 - Tambah Bias $b_1 = -0.000450$
 - Total hasil akhir neuron:
@@ -354,7 +354,7 @@ $$\text{out}_1 = \max(0, +0.6800) = \mathbf{+0.6800}$$
 Sesuai tampilan website pada **Tahap 6**, perhitungan logit mentah $z_k$ dan probabilitas akhir $P(y_k)$ dihitung menggunakan persamaan:
 
 $$
-z_k = \sum (X_i \times W_{i,k}) + b_k \implies P(y_k) = \frac{e^{z_k}}{\sum e^{z_j}} \times 100\%
+z_k = \sum (X_i x W_{i,k}) + b_k \implies P(y_k) = \frac{e^{z_k}}{\sum e^{z_j}} x 100\%
 $$
 
 **Nilai Logit Mentah Asli dari Ekstraksi Model `best_bawang_model.h5`:**
@@ -376,13 +376,13 @@ $$
 
 3. **Penghitungan Persentase Probabilitas Akhir per Kelas:**
    - **Moler:**
-     $$P(\text{moler}) = \left( \frac{1.038836}{5.398559} \right) \times 100\% = 0.192429 \times 100\% = \mathbf{19,24\%}$$
+     $$P(\text{moler}) = \left( \frac{1.038836}{5.398559} \right) x 100\% = 0.192429 x 100\% = \mathbf{19,24\%}$$
    - **Bukan Bawang:**
-     $$P(\text{non\_bawang}) = \left( \frac{1.223872}{5.398559} \right) \times 100\% = 0.226703 \times 100\% = \mathbf{22,67\%}$$
+     $$P(\text{non\_bawang}) = \left( \frac{1.223872}{5.398559} \right) x 100\% = 0.226703 x 100\% = \mathbf{22,67\%}$$
    - **Sehat:**
-     $$P(\text{sehat}) = \left( \frac{1.001912}{5.398559} \right) \times 100\% = 0.185589 \times 100\% = \mathbf{18,56\%}$$
+     $$P(\text{sehat}) = \left( \frac{1.001912}{5.398559} \right) x 100\% = 0.185589 x 100\% = \mathbf{18,56\%}$$
    - **Trotol / Bercak Ungu:**
-     $$P(\text{trotol}) = \left( \frac{2.133939}{5.398559} \right) \times 100\% = 0.395279 \times 100\% = \mathbf{39,53\%}$$
+     $$P(\text{trotol}) = \left( \frac{2.133939}{5.398559} \right) x 100\% = 0.395279 x 100\% = \mathbf{39,53\%}$$
 
 **Kesimpulan Inferensi Diagnostik:**  
 Model CNN memprediksi citra masukan secara otomatis sebagai **Trotol / Bercak Ungu (*Alternaria porri*)** dengan nilai kepastian probabilitas tertinggi sebesar **39,53%**.
@@ -435,8 +435,8 @@ Berdasarkan tangkapan layar pada Gambar 4.9, berikut adalah rincian setiap kompo
 | 4 | Tombol *"Ambil Foto Langsung"* | *Secondary Button* | Tombol bergaya sekunder yang memuat ikon kamera SVG dan teks *"Ambil Foto Langsung"*. Saat diklik, tombol ini membuka jendela modal kamera (*camera modal*) yang mengaktifkan *webcam* perangkat untuk pengambilan foto secara *real-time*. |
 | 5 | Kotak Notifikasi Saran (*Notice Info*) | *Info Banner* | Panel informasi berwarna biru muda berisi ikon peringatan dan teks *"Gunakan gambar dengan pencahayaan cukup dan fokus pada bagian daun untuk hasil deteksi yang akurat"* sebagai panduan bagi pengguna. |
 | 6 | Kartu Pratinjau Gambar (*Preview Card*) | *Dynamic Card* | Kartu panel di sisi kanan yang awalnya menampilkan placeholder ikon gambar dan teks *"Belum ada gambar dipilih"*. Setelah pengguna memilih gambar, kartu ini berubah menampilkan pratinjau visual citra yang diunggah beserta *badge* hijau bertuliskan *"✓ Gambar Valid"*. |
-| 7 | Panel Metadata Berkas (*Stat Boxes*) | *3-Column Grid* | Tiga kotak statistik yang tersusun horizontal di bawah pratinjau, menampilkan informasi: **Nama file** (misal: `daun_moler.jpg`), **Ukuran** (misal: `245 KB`), dan **Resolusi** (misal: `640×480`). |
-| 8 | Panel Pra-proses Otomatis | *Progress Bars* | Dua bilah progres (*progress bar*) bertuliskan *"Ubah ukuran ke 224×224"* dan *"Normalisasi nilai piksel [0,1]"* yang masing-masing menampilkan status *"Selesai"* berwarna hijau setelah gambar berhasil diproses oleh backend. |
+| 7 | Panel Metadata Berkas (*Stat Boxes*) | *3-Column Grid* | Tiga kotak statistik yang tersusun horizontal di bawah pratinjau, menampilkan informasi: **Nama file** (misal: `daun_moler.jpg`), **Ukuran** (misal: `245 KB`), dan **Resolusi** (misal: `640x480`). |
+| 8 | Panel Pra-proses Otomatis | *Progress Bars* | Dua bilah progres (*progress bar*) bertuliskan *"Ubah ukuran ke 224x224"* dan *"Normalisasi nilai piksel [0,1]"* yang masing-masing menampilkan status *"Selesai"* berwarna hijau setelah gambar berhasil diproses oleh backend. |
 | 9 | Notifikasi Kesiapan (*Success Notice*) | *Success Banner* | Panel hijau berisi ikon centang dan teks *"Gambar siap diproses. Klik **Proses Gambar** untuk memulai analisis CNN"* yang muncul setelah validasi dan pra-pemrosesan selesai. |
 | 10 | Tombol *"Proses Gambar"* | *Primary Button* | Tombol aksi utama berwarna hijau yang muncul setelah gambar valid dipilih. Saat diklik, tombol ini mengirimkan data *bytes* gambar ke endpoint API `/api/upload` dan memajukan pengguna ke tahapan berikutnya (halaman konvolusi). |
 
@@ -468,10 +468,10 @@ Berdasarkan tangkapan layar pada Gambar 4.10, berikut adalah rincian setiap komp
 
 | No | Nama Komponen | Jenis Elemen | Deskripsi Fungsional |
 | :-: | :--- | :--- | :--- |
-| 1 | Header Tahapan | *Step Indicator* | Label bertuliskan *"Tahap 2 dari 7"* disertai judul *"Lapisan Konvolusi (Conv Layer)"* dan paragraf penjelasan bahwa model memakai 3 blok Konvolusi-ReLU-Pooling berurutan dengan filter 3×3 pada blok pertama. |
-| 2 | Kartu Demo Konvolusi (*Conv Demo*) | *Interactive Card* | Kartu di sisi kiri yang memvisualisasikan cara kerja satu operasi filter konvolusi. Menampilkan tiga elemen berdampingan: **Patch gambar** (grid 3×3 berisi rata-rata piksel RGB dari posisi tengah gambar pengguna), simbol perkalian (×), **Bobot filter** (grid 3×3 berisi rata-rata bobot Conv1 filter #1 dari model terlatih), simbol sama dengan (=), dan **Output** (satu kotak hijau menampilkan nilai hasil *forward-pass* aktual, misal: `0.06`). |
+| 1 | Header Tahapan | *Step Indicator* | Label bertuliskan *"Tahap 2 dari 7"* disertai judul *"Lapisan Konvolusi (Conv Layer)"* dan paragraf penjelasan bahwa model memakai 3 blok Konvolusi-ReLU-Pooling berurutan dengan filter 3x3 pada blok pertama. |
+| 2 | Kartu Demo Konvolusi (*Conv Demo*) | *Interactive Card* | Kartu di sisi kiri yang memvisualisasikan cara kerja satu operasi filter konvolusi. Menampilkan tiga elemen berdampingan: **Patch gambar** (grid 3x3 berisi rata-rata piksel RGB dari posisi tengah gambar pengguna), simbol perkalian (x), **Bobot filter** (grid 3x3 berisi rata-rata bobot Conv1 filter #1 dari model terlatih), simbol sama dengan (=), dan **Output** (satu kotak hijau menampilkan nilai hasil *forward-pass* aktual, misal: `0.06`). |
 | 3 | Notifikasi Penjelasan Data (*Notice Info*) | *Info Banner* | Panel biru muda di bawah demo konvolusi yang menjelaskan bahwa Patch, Filter, dan Output yang ditampilkan merupakan data asli dari model terlatih, bukan aproksimasi. |
-| 4 | Tabel Parameter Konvolusi | *Parameter Table* | Tabel berisi spesifikasi teknis 3 blok konvolusi berurutan: **Conv1** (32 filter, kernel 3×3, stride 1, padding same), **Conv2** (64 filter), **Conv3** (128 filter), serta dimensi input tensor awal ($224 \times 224 \times 3$) dan output Conv1 ($224 \times 224 \times 32$). |
+| 4 | Tabel Parameter Konvolusi | *Parameter Table* | Tabel berisi spesifikasi teknis 3 blok konvolusi berurutan: **Conv1** (32 filter, kernel 3x3, stride 1, padding same), **Conv2** (64 filter), **Conv3** (128 filter), serta dimensi input tensor awal ($224 x 224 x 3$) dan output Conv1 ($224 x 224 x 32$). |
 | 5 | Kartu *Feature Maps* Hasil Konvolusi | *Card + Grid* | Kartu di sisi kanan dengan judul *"Feature Maps Hasil Konvolusi"* dan *tag badge* ungu bertuliskan *"32 filter"*. Berisi grid 32 gambar peta fitur kecil berskema warna *tinting RGB* yang menunjukkan hasil ekstraksi fitur visual dari gambar masukan pengguna. |
 | 6 | Notifikasi Peringatan Nilai Negatif | *Warning Banner* | Panel kuning berisi ikon segitiga peringatan dan teks *"Feature map ini masih mengandung nilai negatif. Nilai negatif akan diproses ReLU di tahap berikutnya"* untuk menginformasikan bahwa data belum melewati fungsi aktivasi. |
 | 7 | Tombol *"Kembali"* | *Secondary Button* | Tombol navigasi kembali ke halaman Input (Tahap 1). |
@@ -542,7 +542,7 @@ Berdasarkan tangkapan layar pada Gambar 4.11, berikut adalah rincian setiap komp
 | 1 | Header Tahapan | *Step Indicator* | Label bertuliskan *"Tahap 3 dari 7"* disertai judul *"Fungsi Aktivasi ReLU"* dan penjelasan bahwa ReLU mengganti semua nilai negatif dengan nol serta diterapkan setelah setiap lapisan konvolusi (ReLU1, ReLU2, ReLU3). |
 | 2 | Kartu Rumus ReLU | *Formula Card* | Kartu di sisi kiri yang menampilkan rumus matematis `f(x) = max(0, x)` dalam format teks besar, disertai dua kotak demonstrasi perbandingan: kotak merah muda bertuliskan *"Nilai negatif → dibuang"* (misal: `-0.82 → 0`) dan kotak hijau muda bertuliskan *"Nilai positif → dipertahankan"* (misal: `+0.06 → 0.06`). Nilai yang ditampilkan merupakan data asli dari output Conv1. |
 | 3 | Catatan Sumber Data (*Note*) | *Muted Text* | Teks kecil di bawah kotak perbandingan yang menjelaskan bahwa nilai `0.06` adalah output Conv1 yang sama dengan halaman konvolusi sebelumnya, dan nilai satunya diambil dari statistik nyata (min/max) seluruh *feature map* Conv1. |
-| 4 | Tabel Ringkasan ReLU | *Parameter Table* | Tabel berisi 5 baris informasi: **Fungsi** (`max(0, x)`), **ReLU1** setelah Conv1 ($224 \times 224 \times 32$), **ReLU2** setelah Conv2 ($112 \times 112 \times 64$), **ReLU3** setelah Conv3 ($56 \times 56 \times 128$), dan **Tujuan** (Non-linearitas). |
+| 4 | Tabel Ringkasan ReLU | *Parameter Table* | Tabel berisi 5 baris informasi: **Fungsi** (`max(0, x)`), **ReLU1** setelah Conv1 ($224 x 224 x 32$), **ReLU2** setelah Conv2 ($112 x 112 x 64$), **ReLU3** setelah Conv3 ($56 x 56 x 128$), dan **Tujuan** (Non-linearitas). |
 | 5 | Kartu *Feature Map* Setelah ReLU | *Card + Grid* | Kartu di sisi kanan dengan judul *"FEATURE MAP SETELAH RELU (AREA ABU = NILAI NOL)"* dan *tag badge* hijau bertuliskan *"32 FILTER"*. Berisi grid 32 gambar peta aktivasi berskema warna hijau mint, di mana piksel bernilai 0 ditampilkan sebagai area abu-abu terang dan piksel aktif (positif) ditampilkan dalam gradasi hijau. |
 | 6 | Notifikasi Sukses (*Success Notice*) | *Success Banner* | Panel hijau berisi ikon centang dan teks *"Nilai negatif sudah dihapus. Feature map kini hanya berisi nilai 0 atau positif, siap masuk pooling layer"* yang menandakan proses ReLU telah selesai. |
 | 7 | Tombol *"Kembali"* | *Secondary Button* | Tombol navigasi kembali ke halaman Konvolusi (Tahap 2). |
@@ -593,7 +593,7 @@ def generate_relu_maps(relu_arr, conv_weights=None, max_filters=32):
 ---
 
 ### 5. Halaman Pooling Layer
-Halaman lapisan *pooling* memperlihatkan hasil proses *downsampling* matriks fitur menggunakan operasi *Max Pooling* dengan ukuran jendela $2 \times 2$ dan *stride* 2. Pada tampilan ini, terlihat bagaimana dimensi spasial citra direduksi hingga 50% tanpa kehilangan informasi tekstur dan karakteristik utama penyakit, sehingga komputasi jaringan menjadi jauh lebih efisien, menghemat penggunaan memori RAM server, serta meningkatkan ketahanan model terhadap pergeseran posisi objek (*spatial invariance*).
+Halaman lapisan *pooling* memperlihatkan hasil proses *downsampling* matriks fitur menggunakan operasi *Max Pooling* dengan ukuran jendela $2 x 2$ dan *stride* 2. Pada tampilan ini, terlihat bagaimana dimensi spasial citra direduksi hingga 50% tanpa kehilangan informasi tekstur dan karakteristik utama penyakit, sehingga komputasi jaringan menjadi jauh lebih efisien, menghemat penggunaan memori RAM server, serta meningkatkan ketahanan model terhadap pergeseran posisi objek (*spatial invariance*).
 
 `[BAGIAN GAMBAR 4. 12: Tempatkan Tangkapan Layar Halaman Pooling Layer di sini]`
 
@@ -605,10 +605,10 @@ Berdasarkan tangkapan layar pada Gambar 4.12, berikut adalah rincian setiap komp
 
 | No | Nama Komponen | Jenis Elemen | Deskripsi Fungsional |
 | :-: | :--- | :--- | :--- |
-| 1 | Header Tahapan | *Step Indicator* | Label bertuliskan *"Tahap 4 dari 7"* disertai judul *"Max Pooling Layer"* dan penjelasan bahwa jendela 2×2 mengambil nilai tertinggi setiap area, dilakukan 3 kali (Pool1, Pool2, Pool3) hingga dimensi menjadi $28 \times 28 \times 128$. |
-| 2 | Kartu Demo Max Pooling (*Pooling Demo*) | *Interactive Card* | Kartu di sisi kiri yang memvisualisasikan cara kerja *Max Pooling* 2×2 dengan dua grid berdampingan: grid **Sebelum (4×4)** berisi 16 sel nilai piksel dan grid **Sesudah (2×2)** berisi 4 sel hasil seleksi nilai tertinggi, dihubungkan oleh simbol panah (→). Setiap sel bernilai tinggi diberi *highlight* untuk menunjukkan pemilihan nilai maksimum. |
-| 3 | Catatan Penjelasan Pooling | *Muted Text Box* | Kotak teks berlatar abu-abu yang menjelaskan: *"Tiap jendela 2×2 → ambil nilai tertinggi → 1 nilai output"*. |
-| 4 | Tabel Parameter Pooling | *Parameter Table* | Tabel berisi 5 baris spesifikasi: **Metode** (Max Pooling, window 2×2, stride 2), **Pool1** ($224 \times 224 \times 32 → 112 \times 112 \times 32$), **Pool2** ($112 \times 112 \times 64 → 56 \times 56 \times 64$), **Pool3** ($56 \times 56 \times 128 → 28 \times 28 \times 128$), dan **Output akhir ke GAP** ($28 \times 28 \times 128$). |
+| 1 | Header Tahapan | *Step Indicator* | Label bertuliskan *"Tahap 4 dari 7"* disertai judul *"Max Pooling Layer"* dan penjelasan bahwa jendela 2x2 mengambil nilai tertinggi setiap area, dilakukan 3 kali (Pool1, Pool2, Pool3) hingga dimensi menjadi $28 x 28 x 128$. |
+| 2 | Kartu Demo Max Pooling (*Pooling Demo*) | *Interactive Card* | Kartu di sisi kiri yang memvisualisasikan cara kerja *Max Pooling* 2x2 dengan dua grid berdampingan: grid **Sebelum (4x4)** berisi 16 sel nilai piksel dan grid **Sesudah (2x2)** berisi 4 sel hasil seleksi nilai tertinggi, dihubungkan oleh simbol panah (→). Setiap sel bernilai tinggi diberi *highlight* untuk menunjukkan pemilihan nilai maksimum. |
+| 3 | Catatan Penjelasan Pooling | *Muted Text Box* | Kotak teks berlatar abu-abu yang menjelaskan: *"Tiap jendela 2x2 → ambil nilai tertinggi → 1 nilai output"*. |
+| 4 | Tabel Parameter Pooling | *Parameter Table* | Tabel berisi 5 baris spesifikasi: **Metode** (Max Pooling, window 2x2, stride 2), **Pool1** ($224 x 224 x 32 → 112 x 112 x 32$), **Pool2** ($112 x 112 x 64 → 56 x 56 x 64$), **Pool3** ($56 x 56 x 128 → 28 x 28 x 128$), dan **Output akhir ke GAP** ($28 x 28 x 128$). |
 | 5 | Kartu *Feature Map* Setelah Pooling | *Card + Grid* | Kartu di sisi kanan dengan judul *"FEATURE MAP SETELAH POOLING"* dan *tag badge* ambar/kuning bertuliskan *"32 FILTER"*. Berisi grid 32 gambar peta fitur hasil *downsampling* yang diwarnai dengan skema warna ambar/emas untuk menyoroti area piksel bernilai tinggi. |
 | 6 | Bilah Progres Reduksi Dimensi | *Progress Bar* | Bilah progres bertuliskan *"Reduksi dimensi"* dengan nilai *"75%"* berwarna ambar, menunjukkan total persentase piksel yang telah direduksi melalui 3 tahap *pooling* berturut-turut. |
 | 7 | Tombol *"Kembali"* | *Secondary Button* | Tombol navigasi kembali ke halaman ReLU (Tahap 3). |
@@ -671,12 +671,12 @@ Berdasarkan tangkapan layar pada Gambar 4.13, berikut adalah rincian setiap komp
 
 | No | Nama Komponen | Jenis Elemen | Deskripsi Fungsional |
 | :-: | :--- | :--- | :--- |
-| 1 | Header Tahapan | *Step Indicator* | Label bertuliskan *"Tahap 5 dari 7"* disertai judul *"Global Average Pooling (GAP)"* dan penjelasan bahwa tensor 3D ($28 \times 28 \times 128$) diringkas menjadi vektor 1D dengan 128 elemen melalui perhitungan satu nilai rata-rata per *feature map*. |
-| 2 | Kartu Tensor 3D Masuk | *Card + 3D Visual* | Kartu di sisi kiri yang menampilkan visualisasi tumpukan 128 *feature map* dalam bentuk lapisan-lapisan (*stacked layers*) pseudo-3D. Di bawahnya terdapat keterangan *"Setiap lapisan = satu feature map 28×28 piksel dari satu filter berbeda (hasil blok konvolusi ke-3)"*. |
-| 3 | Tabel Statistik Vektor | *Parameter Table* | Tabel berisi 7 baris informasi numerik: **Dimensi input** ($28 \times 28 \times 128$), **Metode** (Rata-rata per channel / GAP), **Total elemen output** (128), **Nilai minimum** (`0.00` karena ReLU), **Nilai maksimum** (misal: `3.74`), **Rata-rata** (misal: `0.61`), dan **Sparsity / nilai 0** (misal: `29%`). Nilai-nilai ini diambil secara dinamis dari hasil inferensi gambar pengguna. |
+| 1 | Header Tahapan | *Step Indicator* | Label bertuliskan *"Tahap 5 dari 7"* disertai judul *"Global Average Pooling (GAP)"* dan penjelasan bahwa tensor 3D ($28 x 28 x 128$) diringkas menjadi vektor 1D dengan 128 elemen melalui perhitungan satu nilai rata-rata per *feature map*. |
+| 2 | Kartu Tensor 3D Masuk | *Card + 3D Visual* | Kartu di sisi kiri yang menampilkan visualisasi tumpukan 128 *feature map* dalam bentuk lapisan-lapisan (*stacked layers*) pseudo-3D. Di bawahnya terdapat keterangan *"Setiap lapisan = satu feature map 28x28 piksel dari satu filter berbeda (hasil blok konvolusi ke-3)"*. |
+| 3 | Tabel Statistik Vektor | *Parameter Table* | Tabel berisi 7 baris informasi numerik: **Dimensi input** ($28 x 28 x 128$), **Metode** (Rata-rata per channel / GAP), **Total elemen output** (128), **Nilai minimum** (`0.00` karena ReLU), **Nilai maksimum** (misal: `3.74`), **Rata-rata** (misal: `0.61`), dan **Sparsity / nilai 0** (misal: `29%`). Nilai-nilai ini diambil secara dinamis dari hasil inferensi gambar pengguna. |
 | 4 | Kartu Visualisasi Vektor 1D Output | *Card + Bar Visual* | Kartu di sisi kanan yang menampilkan sampel 60 nilai pertama dari 128 total nilai dalam bentuk batang-batang vertikal mini (*bar visualization*). Setiap batang merepresentasikan satu elemen vektor GAP, dengan tinggi batang proporsional terhadap besaran nilainya. Di bawahnya terdapat label *"Channel ke-1"* hingga *"Channel terakhir"*. |
 | 5 | Bilah Progres Panjang Vektor | *Progress Bar* | Bilah progres penuh 100% bertuliskan *"Panjang vektor"* dengan nilai *"128 elemen"*, menunjukkan bahwa seluruh 128 kanal telah berhasil diringkas. |
-| 6 | Kartu Proses Transformasi | *Flow Diagram Card* | Kartu visual yang menampilkan alur transformasi dimensi menggunakan *badge* berwarna: kotak ungu bertuliskan *"28×28×128"* → teks *"GAP (rata-rata H×W)"* → kotak hijau bertuliskan *"128 × 1"*, disertai penjelasan bahwa setiap *feature map* 28×28 dirata-ratakan menjadi satu nilai tunggal. |
+| 6 | Kartu Proses Transformasi | *Flow Diagram Card* | Kartu visual yang menampilkan alur transformasi dimensi menggunakan *badge* berwarna: kotak ungu bertuliskan *"28x28x128"* → teks *"GAP (rata-rata HxW)"* → kotak hijau bertuliskan *"128 x 1"*, disertai penjelasan bahwa setiap *feature map* 28x28 dirata-ratakan menjadi satu nilai tunggal. |
 | 7 | Tombol *"Kembali"* | *Secondary Button* | Tombol navigasi kembali ke halaman Pooling (Tahap 4). |
 | 8 | Tombol *"Lanjut ke Fully Connected"* | *Primary Button* | Tombol navigasi maju ke halaman Fully Connected Layer (Tahap 6). |
 
@@ -810,7 +810,7 @@ Berdasarkan tangkapan layar pada Gambar 4.15, berikut adalah rincian setiap komp
 | 5 | Kartu Grafik Probabilitas | *Card + Chart.js Canvas* | Kartu berisi elemen `<canvas>` yang menampilkan *bar chart* probabilitas ke-4 kelas menggunakan pustaka Chart.js. Grafik ini memvisualisasikan distribusi kepercayaan model secara interaktif dengan *tooltip* saat kursor diarahkan ke setiap batang. |
 | 6 | Panel Kelas Terdeteksi (*Confidence Big*) | *Hero Display Panel* | Panel besar di sisi kanan yang menampilkan tiga informasi utama secara vertikal: label *"Kelas Terdeteksi"*, **nama penyakit** yang terdeteksi dalam teks besar (misal: *"Moler"*), **nama latin** patogen dalam teks miring ungu (misal: *Fusarium oxysporum*), **angka *confidence score*** berukuran sangat besar (misal: *95.00%*), label *"Confidence Score"*, serta **bilah progres ungu** yang panjangnya proporsional terhadap tingkat kepercayaan. |
 | 7 | Kartu Rekomendasi Penanganan | *Card + List* | Kartu berisi daftar poin-poin rekomendasi tindakan praktis yang disesuaikan secara dinamis dengan kelas penyakit terdeteksi, mencakup langkah pengendalian hama, pemupukan, penyemprotan fungisida, atau informasi bahwa tanaman dalam kondisi sehat. |
-| 8 | Tabel Ringkasan Proses CNN | *Parameter Table* | Tabel rangkuman seluruh alur *pipeline* CNN dari awal hingga akhir: **Input gambar** ($224 \times 224 \times 3$), **Konvolusi** (3 blok: 32 → 64 → 128 filter), **ReLU** (jumlah nilai aktif), **Pooling** (3 tahap, akhir $28 \times 28 \times 128$), **GAP** (128 elemen), **FC** (512 neuron + Dropout 0.5), dan **Output** (4 kelas Softmax). |
+| 8 | Tabel Ringkasan Proses CNN | *Parameter Table* | Tabel rangkuman seluruh alur *pipeline* CNN dari awal hingga akhir: **Input gambar** ($224 x 224 x 3$), **Konvolusi** (3 blok: 32 → 64 → 128 filter), **ReLU** (jumlah nilai aktif), **Pooling** (3 tahap, akhir $28 x 28 x 128$), **GAP** (128 elemen), **FC** (512 neuron + Dropout 0.5), dan **Output** (4 kelas Softmax). |
 | 9 | Tombol *"Kembali"* | *Secondary Button* | Tombol navigasi kembali ke halaman Fully Connected (Tahap 6). |
 | 10 | Tombol *"Deteksi Ulang"* | *Secondary Button* | Tombol yang mereset seluruh sesi dan mengembalikan pengguna ke halaman Input (Tahap 1) untuk mengunggah gambar baru. |
 | 11 | Tombol *"Unduh Laporan PDF"* | *Primary Button* | Tombol aksi untuk mengunduh resume lengkap hasil deteksi ke dalam berkas format `.pdf`, mencakup gambar masukan, kelas terdeteksi, *confidence score*, probabilitas tiap kelas, dan rekomendasi penanganan. |

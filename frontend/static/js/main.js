@@ -314,7 +314,7 @@ function tampilkanPreview(file, data) {
     // Hitung resolusi asli gambar langsung di browser (tidak bergantung pada backend)
     const imgProbe = new Image();
     imgProbe.onload = () => {
-      const resolusi = `${imgProbe.naturalWidth}×${imgProbe.naturalHeight}`;
+      const resolusi = `${imgProbe.naturalWidth}x${imgProbe.naturalHeight}`;
       setEl('metaResolution', resolusi);
 
       const zoneInfo = document.querySelector('#uploadZone div[style*="teal-500"]');

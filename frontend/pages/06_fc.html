@@ -35,7 +35,7 @@
   </div>
   <div class="card" style="margin-top:14px;">
     <div class="card-title">PERHITUNGAN KLASIFIKASI DENSE & SOFTMAX</div>
-    <div class="relu-formula" style="font-size:16px;">z<sub>k</sub> = ∑ (X<sub>i</sub> × W<sub>i,k</sub>) + b<sub>k</sub> &nbsp;⟹&nbsp; P(y<sub>k</sub>) = e<sup>z<sub>k</sub></sup> / ∑ e<sup>z<sub>j</sub></sup></div>
+    <div class="relu-formula" style="font-size:16px;">z<sub>k</sub> = ∑ (X<sub>i</sub> x W<sub>i,k</sub>) + b<sub>k</sub> &nbsp;⟹&nbsp; P(y<sub>k</sub>) = e<sup>z<sub>k</sub></sup> / ∑ e<sup>z<sub>j</sub></sup></div>
     <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:-8px;margin-bottom:10px;">
       Lapisan Dense mengubah 1.280 fitur GAP menjadi 4 nilai logit mentah (z_k), kemudian fungsi Softmax menormalisasikan logit menjadi persentase probabilitas.
     </div>
@@ -48,7 +48,7 @@
       <b>Langkah 2 — Ubah ke Eksponensial e<sup>z<sub>k</sub></sup>:</b> Hitung nilai eksponensial (e = 2.71828) untuk masing-masing dari 4 logit.<br/>
       &nbsp;&nbsp;• <span id="fcStep2Text"><b>Data Asli Model:</b> e<sup>+3.825</sup> = <code>45.83272</code> | Total Σ e<sup>z</sup> seluruh 4 kelas = <code>48.08032</code></span><br/>
       <b>Langkah 3 — Hitung Probabilitas Softmax:</b> Bagi nilai e<sup>z</sup> kelas tersebut dengan Total Σ e<sup>z</sup>, lalu kalikan 100%.<br/>
-      &nbsp;&nbsp;• <span id="fcStep3Text"><b>Hasil Akhir Prediksi:</b> P(Bercak Ungu) = <code>(45.83272 ÷ 48.08032) × 100% = <b style="color:#6b21a8;">95.33%</b></code></span>
+      &nbsp;&nbsp;• <span id="fcStep3Text"><b>Hasil Akhir Prediksi:</b> P(Bercak Ungu) = <code>(45.83272 ÷ 48.08032) x 100% = <b style="color:#6b21a8;">95.33%</b></code></span>
     </div>
     <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;" id="softmaxFormula"></div>
     <div style="overflow-x:auto;">

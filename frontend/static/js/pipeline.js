@@ -75,11 +75,11 @@ function buildFmap(el, lo, hi, zeroChance = 0, seedLabel = 'fmap') {
 }
 
 // ============================================================
-// HELPER: KARTU FILTER BISA DIKLIK -> TAMPILKAN BOBOT KERNEL 3×3
+// HELPER: KARTU FILTER BISA DIKLIK -> TAMPILKAN BOBOT KERNEL 3x3
 // ------------------------------------------------------------
-// kernel3x3: array 3×3 (list of 3 list) berisi bobot kernel ASLI dari
+// kernel3x3: array 3x3 (list of 3 list) berisi bobot kernel ASLI dari
 // backend (atau nilai ilustrasi ter-seed kalau backend belum merespons).
-// null artinya filter ini BUKAN kernel konvolusi 3×3 (mis. fitur warna
+// null artinya filter ini BUKAN kernel konvolusi 3x3 (mis. fitur warna
 // turunan seperti "warna hijau"/"kecerahan"), jadi tidak ada bobot untuk
 // ditampilkan -- panel akan menjelaskan itu apa adanya, bukan mengarang angka.
 function attachKernelClick(wrap, kernel3x3, stageNote, filterIndex) {
@@ -100,7 +100,7 @@ function attachKernelClick(wrap, kernel3x3, stageNote, filterIndex) {
       if (kernel3x3) {
         const title = document.createElement('div');
         title.className = 'fmap-kernel-title';
-        title.textContent = 'Bobot Kernel 3×3';
+        title.textContent = 'Bobot Kernel 3x3';
         panel.appendChild(title);
 
         const grid = document.createElement('div');
@@ -125,7 +125,7 @@ function attachKernelClick(wrap, kernel3x3, stageNote, filterIndex) {
       } else {
         const note = document.createElement('div');
         note.className = 'fmap-kernel-note';
-        note.textContent = 'Filter ini bukan kernel konvolusi 3×3, melainkan fitur turunan (warna/kecerahan) — tidak ada bobot untuk ditampilkan.';
+        note.textContent = 'Filter ini bukan kernel konvolusi 3x3, melainkan fitur turunan (warna/kecerahan) — tidak ada bobot untuk ditampilkan.';
         panel.appendChild(note);
       }
       wrap.appendChild(panel);

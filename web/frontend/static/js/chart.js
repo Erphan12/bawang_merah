@@ -228,15 +228,15 @@ function renderConvLeftCardOnly() {
         <div style="font-weight:700;color:#1E293B;font-size:12px;margin-bottom:4px;">1. Normalisasi Piksel Gambar (RGB → Skala [0.0, 1.0])</div>
         <div style="font-size:11px;color:#475569;margin-bottom:6px;"><b>Rumus:</b> <code>X = Rata-rata(R, G, B) ÷ 255.0</code> | <b>Lokasi Sampel:</b> Pusat foto <code>(X: 110–112, Y: 110–112)</code></div>
         <table style="width:100%;font-size:10.5px;border-collapse:collapse;margin-top:4px;">
-          <tr style="background:#EDF2F7;color:#334155;font-weight:600;"><td style="padding:4px 6px;">Posisi Spasial (3×3)</td><td style="padding:4px 6px;">Piksel Asli (Rata-rata)</td><td style="padding:4px 6px;text-align:right;">Normalisasi (X)</td></tr>
+          <tr style="background:#EDF2F7;color:#334155;font-weight:600;"><td style="padding:4px 6px;">Posisi Spasial (3x3)</td><td style="padding:4px 6px;">Piksel Asli (Rata-rata)</td><td style="padding:4px 6px;text-align:right;">Normalisasi (X)</td></tr>
           ${normRows}
         </table>
       </div>
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;">
-        <div style="font-weight:700;color:#1E293B;font-size:12px;margin-bottom:4px;">2. Perkalian Element-Wise (Piksel X × Bobot Filter W) — Filter #${state.filter_index}</div>
-        <div style="font-size:11px;color:#475569;margin-bottom:6px;"><b>Rumus:</b> <code>P_{i,j} = X_{i,j} × W_{i,j}</code></div>
+        <div style="font-weight:700;color:#1E293B;font-size:12px;margin-bottom:4px;">2. Perkalian Element-Wise (Piksel X x Bobot Filter W) — Filter #${state.filter_index}</div>
+        <div style="font-size:11px;color:#475569;margin-bottom:6px;"><b>Rumus:</b> <code>P_{i,j} = X_{i,j} x W_{i,j}</code></div>
         <table style="width:100%;font-size:10.5px;border-collapse:collapse;">
-          <tr style="background:#EDF2F7;color:#334155;font-weight:600;"><td style="padding:4px 6px;">Posisi Spasial</td><td style="padding:4px 6px;">Piksel X</td><td style="padding:4px 6px;">Bobot Filter W</td><td style="padding:4px 6px;text-align:right;">Hasil (X × W)</td></tr>
+          <tr style="background:#EDF2F7;color:#334155;font-weight:600;"><td style="padding:4px 6px;">Posisi Spasial</td><td style="padding:4px 6px;">Piksel X</td><td style="padding:4px 6px;">Bobot Filter W</td><td style="padding:4px 6px;text-align:right;">Hasil (X x W)</td></tr>
           ${prodRows}
         </table>
       </div>
@@ -262,9 +262,9 @@ function renderConvLeftCardOnly() {
       </div>
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;line-height:1.5;">
         <div style="font-weight:700;color:#1E293B;margin-bottom:4px;">5, 6, 7. Parameter Arsitektur & FLOPs:</div>
-        • <b>5. Dimensi Spasial Out:</b> <code>⌊(224 - 3 + 2)/1⌋ + 1 = 224 piksel</code> (gambar tetap 224×224).<br/>
-        • <b>6. Parameter Bobot Conv1:</b> <code>3×3×3×32 = 864 bobot terlatih</code> (tanpa bias karena <code>use_bias=False</code>).<br/>
-        • <b>7. Beban Komputasi FLOPs:</b> <code>2 × 224 × 224 × 3 × 9 × 32 = 86.704.128 FLOPs (~86.7 MFLOPs)</code>.
+        • <b>5. Dimensi Spasial Out:</b> <code>⌊(224 - 3 + 2)/1⌋ + 1 = 224 piksel</code> (gambar tetap 224x224).<br/>
+        • <b>6. Parameter Bobot Conv1:</b> <code>3x3x3x32 = 864 bobot terlatih</code> (tanpa bias karena <code>use_bias=False</code>).<br/>
+        • <b>7. Beban Komputasi FLOPs:</b> <code>2 x 224 x 224 x 3 x 9 x 32 = 86.704.128 FLOPs (~86.7 MFLOPs)</code>.
       </div>
     `;
   }
@@ -427,7 +427,7 @@ function initConv() {
     });
   }
 
-  // Output = dot product dari patch × filter atau nilai asli dari demo
+  // Output = dot product dari patch x filter atau nilai asli dari demo
   const outEl = document.getElementById('convOutputVal');
   if (outEl) {
     outEl.textContent = (dotFinal >= 0 ? '+' : '') + dotFinal.toFixed(2);
@@ -519,7 +519,7 @@ function initConv() {
         </div>
         <table style="width:100%;font-size:10.5px;border-collapse:collapse;margin-top:4px;">
           <tr style="background:#EDF2F7;color:#334155;font-weight:600;">
-            <td style="padding:4px 6px;">Posisi Spasial (3×3)</td>
+            <td style="padding:4px 6px;">Posisi Spasial (3x3)</td>
             <td style="padding:4px 6px;">Piksel Asli (Rata-rata)</td>
             <td style="padding:4px 6px;text-align:right;">Normalisasi (X)</td>
           </tr>
@@ -528,16 +528,16 @@ function initConv() {
       </div>
 
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;">
-        <div style="font-weight:700;color:#1E293B;font-size:12px;margin-bottom:4px;">2. Perkalian Element-Wise (Piksel X × Bobot Filter W) — Filter #${state.filter_index}</div>
+        <div style="font-weight:700;color:#1E293B;font-size:12px;margin-bottom:4px;">2. Perkalian Element-Wise (Piksel X x Bobot Filter W) — Filter #${state.filter_index}</div>
         <div style="font-size:11px;color:#475569;margin-bottom:6px;">
-          <b>Rumus:</b> <code>P_{i,j} = X_{i,j} × W_{i,j}</code> | Bobot positif mendeteksi pola, bobot negatif menekan latar belakang.
+          <b>Rumus:</b> <code>P_{i,j} = X_{i,j} x W_{i,j}</code> | Bobot positif mendeteksi pola, bobot negatif menekan latar belakang.
         </div>
         <table style="width:100%;font-size:10.5px;border-collapse:collapse;">
           <tr style="background:#EDF2F7;color:#334155;font-weight:600;">
             <td style="padding:4px 6px;">Posisi Spasial</td>
             <td style="padding:4px 6px;">Piksel X</td>
             <td style="padding:4px 6px;">Bobot Filter W</td>
-            <td style="padding:4px 6px;text-align:right;">Hasil Perkalian (X × W)</td>
+            <td style="padding:4px 6px;text-align:right;">Hasil Perkalian (X x W)</td>
           </tr>
           ${prodRows}
         </table>
@@ -566,9 +566,9 @@ function initConv() {
 
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;line-height:1.5;">
         <div style="font-weight:700;color:#1E293B;margin-bottom:4px;">6, 7, 8. Parameter Arsitektur & FLOPs:</div>
-        • <b>6. Dimensi Spasial Out:</b> <code>⌊(224 - 3 + 2)/1⌋ + 1 = 224 piksel</code> (gambar tetap 224×224).<br/>
-        • <b>7. Parameter Bobot Conv1:</b> <code>(3×3×3 + 1) × 32 = 896 bobot terlatih</code>.<br/>
-        • <b>8. Beban Komputasi FLOPs:</b> <code>2 × 224 × 224 × 3 × 9 × 32 = 86.704.128 FLOPs (~86.7 MFLOPs)</code>.
+        • <b>6. Dimensi Spasial Out:</b> <code>⌊(224 - 3 + 2)/1⌋ + 1 = 224 piksel</code> (gambar tetap 224x224).<br/>
+        • <b>7. Parameter Bobot Conv1:</b> <code>(3x3x3 + 1) x 32 = 896 bobot terlatih</code>.<br/>
+        • <b>8. Beban Komputasi FLOPs:</b> <code>2 x 224 x 224 x 3 x 9 x 32 = 86.704.128 FLOPs (~86.7 MFLOPs)</code>.
       </div>
     `;
   }
@@ -597,8 +597,8 @@ function initConv() {
         • <b>6. Bias Multi-Channel (${(biasVal >= 0 ? '+' : '') + biasVal.toFixed(5)}):</b> Diekstrak secara real-time dari file model <code>models/best_bawang_model.h5</code> via Python <code>conv_layer.get_weights()[1]</code>.<br/>
         • <b>7. Output Mentah y (${dotFinal.toFixed(5)}):</b> Penjumlahan Total Dot Product dengan Nilai Bias.<br/>
         • <b>8. Output UI (${dotFinal.toFixed(2)}):</b> Hasil pembulatan Nilai Output Mentah ke 2 angka desimal <code>round(${dotFinal.toFixed(5)}, 2) = ${dotFinal.toFixed(2)}</code>.<br/>
-        • <b>9. Parameter Conv1 (896 Bobot):</b> Perhitungan total memori parameter terlatih dari spesifikasi filter <code>(3×3×3 + 1 bias) × 32 filter = 896 bobot</code>.<br/>
-        • <b>10. Beban FLOPs (86.7 MFLOPs):</b> Dihitung dari total operasi perkalian & penjumlahan seluruh piksel foto <code>2 × 224 × 224 × 3 × 9 × 32 = 86.704.128 FLOPs (~86.7 MFLOPs)</code>.
+        • <b>9. Parameter Conv1 (896 Bobot):</b> Perhitungan total memori parameter terlatih dari spesifikasi filter <code>(3x3x3 + 1 bias) x 32 filter = 896 bobot</code>.<br/>
+        • <b>10. Beban FLOPs (86.7 MFLOPs):</b> Dihitung dari total operasi perkalian & penjumlahan seluruh piksel foto <code>2 x 224 x 224 x 3 x 9 x 32 = 86.704.128 FLOPs (~86.7 MFLOPs)</code>.
       </div>
     `;
   }
@@ -795,7 +795,7 @@ function renderPoolLeftCardOnly() {
 
   const poolNoteEl = document.getElementById('poolNote');
   if (poolNoteEl) {
-    poolNoteEl.textContent = `Pool1 Filter #${state.filter_index}: Tiap jendela 2×2 menyaring 4 piksel aktivasi → memilih nilai tertinggi (Max) → menyusutkan resolusi dari 4×4 (16 sel) menjadi 2×2 (4 sel).`;
+    poolNoteEl.textContent = `Pool1 Filter #${state.filter_index}: Tiap jendela 2x2 menyaring 4 piksel aktivasi → memilih nilai tertinggi (Max) → menyusutkan resolusi dari 4x4 (16 sel) menjadi 2x2 (4 sel).`;
   }
 
   const poolTag = document.getElementById('poolTableTag');
@@ -841,7 +841,7 @@ function renderPoolLeftCardOnly() {
         ${detailCardsHtml}
       </div>
       <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;font-size:11px;color:#92400e;">
-        <b>💡 Efek Downsampling Max Pooling:</b> Ukuran spasial feature map berkurang 50% di lebar & tinggi ($224 \times 224 \rightarrow 112 \times 112$), sehingga total piksel menyusut 75% ($16 \rightarrow 4$ sel pada patch lokal) tanpa kehilangan sinyal fitur terkuat.
+        <b>💡 Efek Downsampling Max Pooling:</b> Ukuran spasial feature map berkurang 50% di lebar & tinggi ($224 x 224 \rightarrow 112 x 112$), sehingga total piksel menyusut 75% ($16 \rightarrow 4$ sel pada patch lokal) tanpa kehilangan sinyal fitur terkuat.
       </div>
     `;
   }
@@ -852,11 +852,11 @@ function renderPoolLeftCardOnly() {
     lineageEl.innerHTML = `
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;">
         <div style="font-weight:700;color:#1E293B;margin-bottom:6px;">🔍 Peta Jalur Angka Max Pooling (Filter #${state.filter_index}):</div>
-        • <b>1. Masukan ReLU (4×4 Patch):</b> Diambil dari aktivasi positif ReLU pada koordinat sekitar pusat foto.<br/>
-        • <b>2. Pembentukan Jendela 2×2 (Stride 2):</b> Patch 4×4 dibagi menjadi 4 region terpisah tanpa tumpang tindih.<br/>
+        • <b>1. Masukan ReLU (4x4 Patch):</b> Diambil dari aktivasi positif ReLU pada koordinat sekitar pusat foto.<br/>
+        • <b>2. Pembentukan Jendela 2x2 (Stride 2):</b> Patch 4x4 dibagi menjadi 4 region terpisah tanpa tumpang tindih.<br/>
         • <b>3. Pemilihan Sinyal Maksimum:</b> Membuang 3 piksel dengan respons lebih lemah dan mempertahankan 1 piksel dengan aktivasi tertinggi.<br/>
-        • <b>4. Matriks Output (2×2 Output):</b> Menghasilkan 4 nilai puncak <code>[${maxVals.map(v => v.toFixed(2)).join(', ')}]</code> yang meneruskan fitur paling dominan ke blok konvolusi berikutnya.<br/>
-        • <b>5. Tahapan Hirarki Pooling Model:</b> Pool1 ($224\rightarrow112$) $\rightarrow$ Pool2 ($112\rightarrow56$) $\rightarrow$ Pool3 ($56\rightarrow28\times28\times128$).
+        • <b>4. Matriks Output (2x2 Output):</b> Menghasilkan 4 nilai puncak <code>[${maxVals.map(v => v.toFixed(2)).join(', ')}]</code> yang meneruskan fitur paling dominan ke blok konvolusi berikutnya.<br/>
+        • <b>5. Tahapan Hirarki Pooling Model:</b> Pool1 ($224\rightarrow112$) $\rightarrow$ Pool2 ($112\rightarrow56$) $\rightarrow$ Pool3 ($56\rightarrow28x28x128$).
       </div>
     `;
   }
@@ -971,7 +971,7 @@ function renderGapLeftCardOnly() {
   if (mathEl) {
     mathEl.innerHTML = `
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;">
-        <div style="font-weight:700;color:#1E293B;margin-bottom:4px;">1. Penjumlahan Spasial 49 Sel (7×7) ${channels[0].name}:</div>
+        <div style="font-weight:700;color:#1E293B;margin-bottom:4px;">1. Penjumlahan Spasial 49 Sel (7x7) ${channels[0].name}:</div>
         <code>Σ = ${p49_0.slice(0, 7).join(' + ')} + ... (49 sel) = <b>${sum49_0.toFixed(3)}</b></code>
       </div>
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;">
@@ -979,7 +979,7 @@ function renderGapLeftCardOnly() {
         <code>y = ${sum49_0.toFixed(3)} ÷ 49 = <b style="color:#0f766e;font-size:12px;">${mean49_0.toFixed(4)}</b></code>
       </div>
       <div style="background:#ccfbf1;border:1px solid #99f6e4;border-radius:8px;padding:8px 10px;font-size:11px;color:#115e59;">
-        <b>💡 Mengapa GAP Digunakan?</b> GAP mengubah tensor $7 \times 7 \times 1280$ ($62.720$ sel) menjadi vektor $1.280 \times 1$, menghilangkan kebutuhan flattening berukuran sangat besar ($62.720$ neuron) dan mencegah *overfitting*.
+        <b>💡 Mengapa GAP Digunakan?</b> GAP mengubah tensor $7 x 7 x 1280$ ($62.720$ sel) menjadi vektor $1.280 x 1$, menghilangkan kebutuhan flattening berukuran sangat besar ($62.720$ neuron) dan mencegah *overfitting*.
       </div>
     `;
   }
@@ -990,8 +990,8 @@ function renderGapLeftCardOnly() {
     lineageEl.innerHTML = `
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;">
         <div style="font-weight:700;color:#1E293B;margin-bottom:6px;">🔍 Peta Jalur Angka Global Average Pooling:</div>
-        • <b>1. Tensor Input 3D:</b> Tumpukan 1.280 feature map berukuran $7 \times 7$ piksel dari ekstraktor konvolusi.<br/>
-        • <b>2. Agregasi Spasial:</b> Setiap $7 \times 7$ feature map dirata-ratakan independen per channel.<br/>
+        • <b>1. Tensor Input 3D:</b> Tumpukan 1.280 feature map berukuran $7 x 7$ piksel dari ekstraktor konvolusi.<br/>
+        • <b>2. Agregasi Spasial:</b> Setiap $7 x 7$ feature map dirata-ratakan independen per channel.<br/>
         • <b>3. Vektor Output 1D:</b> Menghasilkan vektor presisi sepanjang $1.280$ elemen yang dikirim ke lapisan Fully Connected (Dense).<br/>
         • <b>4. Statistik Model Foto Anda:</b> Nilai Max: <code>${fs && fs.max != null ? fs.max.toFixed(2) : '3.74'}</code> | Mean: <code>${fs && fs.mean != null ? fs.mean.toFixed(2) : '0.61'}</code> | Sparsity: <code>${fs && fs.sparsity != null ? fs.sparsity + '%' : '29%'}</code>.
       </div>
@@ -1112,7 +1112,7 @@ function initFC() {
       exp_values: defaultExps,
       probabilities_pct: defaultProbs,
       sum_exp: defaultSumExp,
-      note: "Nilai logit z_k mentah hasil perkalian matriks Dense (1.280D × W) + Bias."
+      note: "Nilai logit z_k mentah hasil perkalian matriks Dense (1.280D x W) + Bias."
     };
 
     if (formulaEl) formulaEl.textContent = scData.formula || 'softmax(z_i) = e^(z_i) / Σ e^(z_j)';
@@ -1166,7 +1166,7 @@ function initFC() {
 
     if (step1El) step1El.innerHTML = `${prefixLabel} z<sub>${maxProbIdx+1}</sub> (${predName}) = <code>(X₁W₁ + X₂W₂ + ... + X₁₂₈₀W₁₂₈₀) + b_${maxProbIdx+1} = ${maxLogitStr}</code>`;
     if (step2El) step2El.innerHTML = `${prefixLabel} e<sup>${maxLogitStr}</sup> = <code>${expValStr}</code> | Total Σ e<sup>z</sup> seluruh 4 kelas = <code>${sumExpStr}</code>`;
-    if (step3El) step3El.innerHTML = `<b>Hasil Akhir Prediksi:</b> P(${predName}) = <code>(${expValStr} ÷ ${sumExpStr}) × 100% = <b style="color:#6b21a8;">${maxPct.toFixed(2)}%</b></code>`;
+    if (step3El) step3El.innerHTML = `<b>Hasil Akhir Prediksi:</b> P(${predName}) = <code>(${expValStr} ÷ ${sumExpStr}) x 100% = <b style="color:#6b21a8;">${maxPct.toFixed(2)}%</b></code>`;
 
     // Update Accordion 1: Rincian Matriks FC & Softmax
     const mathEl = document.getElementById('fcMathDetails');
@@ -1201,11 +1201,11 @@ function initFC() {
       lineageEl.innerHTML = `
         <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;">
           <div style="font-weight:700;color:#1E293B;margin-bottom:6px;">🔍 Peta Jalur Keputusan Klasifikasi Dari Piksel ke Diagnosa Penyakit:</div>
-          • <b>1. Piksel Asli Foto:</b> Citra daun bawang $224 \times 224 \times 3$ dinormalisasi ke rentang $[0.0, 1.0]$.<br/>
+          • <b>1. Piksel Asli Foto:</b> Citra daun bawang $224 x 224 x 3$ dinormalisasi ke rentang $[0.0, 1.0]$.<br/>
           • <b>2. Ekstraksi Fitur Konvolusi:</b> Menyaring pola visual (tepi, bercak, tekstur) melalui 32 filter Conv1.<br/>
           • <b>3. Aktivasi Non-linear (ReLU):</b> Menghapus nilai negatif ($<0 \rightarrow 0$) untuk memperjelas batas fitur.<br/>
-          • <b>4. Reduksi Spasial (Max Pooling):</b> Meringkas wilayah $2 \times 2$ piksel menjadi 1 sinyal terkuat.<br/>
-          • <b>5. Global Average Pooling (GAP):</b> Mengagregasi tensor 3D $7 \times 7 \times 1280$ menjadi vektor 1D sepanjang 1.280 elemen.<br/>
+          • <b>4. Reduksi Spasial (Max Pooling):</b> Meringkas wilayah $2 x 2$ piksel menjadi 1 sinyal terkuat.<br/>
+          • <b>5. Global Average Pooling (GAP):</b> Mengagregasi tensor 3D $7 x 7 x 1280$ menjadi vektor 1D sepanjang 1.280 elemen.<br/>
           • <b>6. Klasifikasi Dense Layer:</b> Menghubungkan 1.280 sinyal fitur ke 128 neuron tersembunyi dan 4 logit kelas output.<br/>
           • <b>7. Output Softmax:</b> Menghasilkan keputusan akhir prediksi kelas <b style="color:#6b21a8;">${predName}</b> dengan tingkat keyakinan <b>${maxPct.toFixed(2)}%</b>.
         </div>

@@ -7,13 +7,13 @@ Perhitungan ini secara eksplisit menjabarkan setiap perubahan nilai numerik, per
 ---
 
 ### a. Normalisasi Citra Masukan ($I \rightarrow I_{\text{norm}}$)
-Citra masukan daun bawang merah berukuran $224 \times 224 \times 3$ piksel memuat rentang nilai intensitas warna RGB $[0, 255]$. Pada pra-pemrosesan citra, nilai piksel dinormalisasi ke rentang kontinu $[0.0, 1.0]$ menggunakan persamaan pembagian:
+Citra masukan daun bawang merah berukuran $224 x 224 x 3$ piksel memuat rentang nilai intensitas warna RGB $[0, 255]$. Pada pra-pemrosesan citra, nilai piksel dinormalisasi ke rentang kontinu $[0.0, 1.0]$ menggunakan persamaan pembagian:
 
 $$
 X_{i, j} = \frac{\text{Channel}(i, j)}{255.0}
 $$
 
-Diambil sampel patch citra $3 \times 3$ piksel dari area pusat citra uji (`(126).jpg`, koordinat pusat $x=112, y=112$):
+Diambil sampel patch citra $3 x 3$ piksel dari area pusat citra uji (`(126).jpg`, koordinat pusat $x=112, y=112$):
 
 - **Piksel RGB Asli $[0, 255]$:**
   - Baris 1: $(1,1)=[168, 169, 157]$, $(1,2)=[164, 165, 152]$, $(1,3)=[168, 169, 156]$
@@ -43,25 +43,25 @@ $$
 Sesuai tampilan website pada **Tahap 2**, operasi konvolusi dihitung dengan rumus perkalian titik (*dot product*) elemen demi elemen antara matriks masukan $X$ dan matriks bobot kernel $W$:
 
 $$
-y = \sum (X_{i,j} \times W_{i,j})
+y = \sum (X_{i,j} x W_{i,j})
 $$
 
-Bobot asli kernel $3 \times 3$ untuk **Filter #1** ($W$) dari layer `Conv1` model MobileNetV2 (setelah merata-ratakan 3 kanal RGB) adalah:
+Bobot asli kernel $3 x 3$ untuk **Filter #1** ($W$) dari layer `Conv1` model MobileNetV2 (setelah merata-ratakan 3 kanal RGB) adalah:
 
 $$
 W = \begin{bmatrix} -0.19900 & -0.29629 & -0.07772 \\ +0.32279 & +0.42667 & +0.15698 \\ -0.10745 & -0.00619 & -0.07872 \end{bmatrix}
 $$
 
 **Penjabaran Perkalian 9 Sel Spasial secara Detail:**
-1. **Sel (1,1):** $0.6458 \times -0.19900 = \mathbf{-0.128507}$
-2. **Sel (1,2):** $0.6288 \times -0.29629 = \mathbf{-0.186296}$
-3. **Sel (1,3):** $0.6444 \times -0.07772 = \mathbf{-0.050088}$
-4. **Sel (2,1):** $0.6588 \times +0.32279 = \mathbf{+0.212659}$
-5. **Sel (2,2):** $0.6444 \times +0.42667 = \mathbf{+0.274963}$
-6. **Sel (2,3):** $0.6353 \times +0.15698 = \mathbf{+0.099730}$
-7. **Sel (3,1):** $0.6719 \times -0.10745 = \mathbf{-0.072195}$
-8. **Sel (3,2):** $0.6680 \times -0.00619 = \mathbf{-0.004133}$
-9. **Sel (3,3):** $0.6523 \times -0.07872 = \mathbf{-0.051350}$
+1. **Sel (1,1):** $0.6458 x -0.19900 = \mathbf{-0.128507}$
+2. **Sel (1,2):** $0.6288 x -0.29629 = \mathbf{-0.186296}$
+3. **Sel (1,3):** $0.6444 x -0.07772 = \mathbf{-0.050088}$
+4. **Sel (2,1):** $0.6588 x +0.32279 = \mathbf{+0.212659}$
+5. **Sel (2,2):** $0.6444 x +0.42667 = \mathbf{+0.274963}$
+6. **Sel (2,3):** $0.6353 x +0.15698 = \mathbf{+0.099730}$
+7. **Sel (3,1):** $0.6719 x -0.10745 = \mathbf{-0.072195}$
+8. **Sel (3,2):** $0.6680 x -0.00619 = \mathbf{-0.004133}$
+9. **Sel (3,3):** $0.6523 x -0.07872 = \mathbf{-0.051350}$
 
 **Penjumlahan Bertahap Seluruh Nilai Komponen:**
 - Total komponen negatif $= -0.128507 - 0.186296 - 0.050088 - 0.072195 - 0.004133 - 0.051350 = \mathbf{-0.492569}$
@@ -95,7 +95,7 @@ $$
 4. **Pembagian Normalisasi Standardized ($\hat{x}$):**
    $$\hat{x} = \frac{0.131545}{0.348592} = \mathbf{+0.377359}$$
 5. **Skala ($\gamma$) & Geseran ($\beta$):**
-   $$y_{\text{BN}} = (0.612176 \times 0.377359) + 2.255549 = 0.231010 + 2.255549 = \mathbf{+2.486559}$$
+   $$y_{\text{BN}} = (0.612176 x 0.377359) + 2.255549 = 0.231010 + 2.255549 = \mathbf{+2.486559}$$
 
 ---
 
@@ -114,14 +114,14 @@ $$
 
 ---
 
-### e. Max Pooling ($2 \times 2$, Stride 2)
-Sesuai tampilan website pada **Tahap 4**, operasi Max Pooling dihitung dengan rumus mengambil nilai maksimum pada jendela $2 \times 2$:
+### e. Max Pooling ($2 x 2$, Stride 2)
+Sesuai tampilan website pada **Tahap 4**, operasi Max Pooling dihitung dengan rumus mengambil nilai maksimum pada jendela $2 x 2$:
 
 $$
-y = \max(X_{2 \times 2})
+y = \max(X_{2 x 2})
 $$
 
-Menyapu patch matriks aktivasi $4 \times 4$ piksel ($M$) menggunakan 4 jendela non-overlapping berukuran $2 \times 2$ piksel untuk mereduksi dimensi spasial sebesar 75%:
+Menyapu patch matriks aktivasi $4 x 4$ piksel ($M$) menggunakan 4 jendela non-overlapping berukuran $2 x 2$ piksel untuk mereduksi dimensi spasial sebesar 75%:
 
 $$
 M = \begin{bmatrix} 
@@ -142,7 +142,7 @@ $$
 4. **Jendela 4 (Baris 3-4, Kolom 3-4):**
    $$\text{Elemen} = \{0.91, 0.18, 0.44, 0.73\} \implies \text{Nilai Maksimum} = \mathbf{0.91}$$
 
-**Matriks Hasil Reduksi ($4 \times 4 \rightarrow 2 \times 2$):**
+**Matriks Hasil Reduksi ($4 x 4 \rightarrow 2 x 2$):**
 
 $$
 M_{\text{pooled}} = \begin{bmatrix} 0.34 & 0.85 \\ 0.22 & 0.91 \end{bmatrix}
@@ -151,10 +151,10 @@ $$
 ---
 
 ### f. Global Average Pooling (GAP)
-Sesuai tampilan website pada **Tahap 5**, operasi Global Average Pooling merata-ratakan seluruh 49 sel piksel spasial ($7 \times 7$) dengan rumus:
+Sesuai tampilan website pada **Tahap 5**, operasi Global Average Pooling merata-ratakan seluruh 49 sel piksel spasial ($7 x 7$) dengan rumus:
 
 $$
-y = \frac{1}{49} \sum X_{7 \times 7}
+y = \frac{1}{49} \sum X_{7 x 7}
 $$
 
 **Penjabaran Perhitungan pada Channel #0001:**
@@ -169,16 +169,16 @@ Proses ini diulang secara konsisten untuk seluruh 1.280 kanal, membentuk **vekto
 ---
 
 ### g. Fully Connected Layer (Dense Layer 128 Neuron)
-Vektor GAP ($1280 \times 1$) dikalikan dengan matriks bobot Dense Layer ($W \in \mathbb{R}^{1280 \times 128}$) ditambah bias ($b \in \mathbb{R}^{128}$):
+Vektor GAP ($1280 x 1$) dikalikan dengan matriks bobot Dense Layer ($W \in \mathbb{R}^{1280 x 128}$) ditambah bias ($b \in \mathbb{R}^{128}$):
 
 $$
-z_m = \sum (X_i \times W_{i, m}) + b_m
+z_m = \sum (X_i x W_{i, m}) + b_m
 $$
 
 **Rincian Perhitungan Perkalian Titik Neuron #1 ($m=1$):**
-- $X_1 \times W_{1, 1} = 0.6100 \times 0.0015 = +0.000915$
-- $X_2 \times W_{2, 1} = 0.0000 \times 0.0443 = 0.000000$
-- $X_3 \times W_{3, 1} = 0.5200 \times -0.0404 = -0.021008$
+- $X_1 x W_{1, 1} = 0.6100 x 0.0015 = +0.000915$
+- $X_2 x W_{2, 1} = 0.0000 x 0.0443 = 0.000000$
+- $X_3 x W_{3, 1} = 0.5200 x -0.0404 = -0.021008$
 - $\dots$ *(diteruskan hingga elemen ke-1280)*
 - Tambah Bias $b_1 = -0.000450$
 - Total hasil akhir neuron:
@@ -193,7 +193,7 @@ $$\text{out}_1 = \max(0, +0.6800) = \mathbf{+0.6800}$$
 Sesuai tampilan website pada **Tahap 6**, perhitungan logit mentah $z_k$ dan probabilitas akhir $P(y_k)$ dihitung menggunakan persamaan:
 
 $$
-z_k = \sum (X_i \times W_{i,k}) + b_k \implies P(y_k) = \frac{e^{z_k}}{\sum e^{z_j}} \times 100\%
+z_k = \sum (X_i x W_{i,k}) + b_k \implies P(y_k) = \frac{e^{z_k}}{\sum e^{z_j}} x 100\%
 $$
 
 **Nilai Logit Mentah Asli dari Ekstraksi Model `best_bawang_model.h5`:**
@@ -215,13 +215,13 @@ $$
 
 3. **Penghitungan Persentase Probabilitas Akhir per Kelas:**
    - **Moler:**
-     $$P(\text{moler}) = \left( \frac{1.038836}{5.398559} \right) \times 100\% = 0.192429 \times 100\% = \mathbf{19,24\%}$$
+     $$P(\text{moler}) = \left( \frac{1.038836}{5.398559} \right) x 100\% = 0.192429 x 100\% = \mathbf{19,24\%}$$
    - **Bukan Bawang:**
-     $$P(\text{non\_bawang}) = \left( \frac{1.223872}{5.398559} \right) \times 100\% = 0.226703 \times 100\% = \mathbf{22,67\%}$$
+     $$P(\text{non\_bawang}) = \left( \frac{1.223872}{5.398559} \right) x 100\% = 0.226703 x 100\% = \mathbf{22,67\%}$$
    - **Sehat:**
-     $$P(\text{sehat}) = \left( \frac{1.001912}{5.398559} \right) \times 100\% = 0.185589 \times 100\% = \mathbf{18,56\%}$$
+     $$P(\text{sehat}) = \left( \frac{1.001912}{5.398559} \right) x 100\% = 0.185589 x 100\% = \mathbf{18,56\%}$$
    - **Trotol / Bercak Ungu:**
-     $$P(\text{trotol}) = \left( \frac{2.133939}{5.398559} \right) \times 100\% = 0.395279 \times 100\% = \mathbf{39,53\%}$$
+     $$P(\text{trotol}) = \left( \frac{2.133939}{5.398559} \right) x 100\% = 0.395279 x 100\% = \mathbf{39,53\%}$$
 
 **Kesimpulan Inferensi Diagnostik:**  
 Model CNN memprediksi citra masukan secara otomatis sebagai **Trotol / Bercak Ungu (*Alternaria porri*)** dengan nilai kepastian probabilitas tertinggi sebesar **39,53%**.

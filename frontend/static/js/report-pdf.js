@@ -156,10 +156,10 @@ async function unduhLaporanPdf() {
     doc.setFontSize(9.5);
 
     const rows = [
-      ['Input gambar', '224 × 224 × 3'],
-      ['Konvolusi', '3 blok — 32 → 64 → 128 filter, kernel 3×3'],
+      ['Input gambar', '224 x 224 x 3'],
+      ['Konvolusi', '3 blok — 32 → 64 → 128 filter, kernel 3x3'],
       ['ReLU', d.relu_active_pct != null ? d.relu_active_pct + '% nilai aktif' : '-'],
-      ['Pooling', '3 tahap — akhir 28 × 28 × 128'],
+      ['Pooling', '3 tahap — akhir 28 x 28 x 128'],
       ['Global Average Pooling', '128 elemen'],
       ['Fully connected', '512 neuron (Dense) + Dropout 0.5'],
       ['Output', (Array.isArray(d.probabilities) ? d.probabilities.length : '-') + ' kelas — Softmax'],

@@ -8,6 +8,27 @@
 let cameraStream = null;
 let currentFacingMode = 'user'; // 'user' = kamera depan, 'environment' = kamera belakang
 
+function triggerNativeCamera() {
+  closeCamera();
+  let input = document.getElementById('nativeCameraPickerInput');
+  if (!input) {
+    input = document.createElement('input');
+    input.id = 'nativeCameraPickerInput';
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.setAttribute('capture', 'environment');
+    input.style.display = 'none';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file && typeof uploadFile === 'function') {
+        uploadFile(file);
+      }
+    };
+    document.body.appendChild(input);
+  }
+  input.click();
+}
+
 async function openCamera() {
   const modal = document.getElementById('cameraModal');
   const video = document.getElementById('cameraVideo');
@@ -15,14 +36,16 @@ async function openCamera() {
   const videoWrap = video ? video.parentElement : null;
   if (!modal || !video) return;
 
+  // Jika WebRTC getUserMedia tidak didukung (misal diakses via HTTP IP VPS non-HTTPS),
+  // langsung panggil kamera bawaan HTML5 (capture="environment") agar tidak terhambat modal error!
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    triggerNativeCamera();
+    return;
+  }
+
   modal.style.display = 'flex';
   errBox.style.display = 'none';
   video.style.display = 'block';
-
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showCameraError('Browser ini tidak mendukung akses kamera langsung. Silakan pilih foto dari perangkat.');
-    return;
-  }
 
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -42,11 +65,11 @@ async function openCamera() {
 
   } catch (err) {
     console.error('Gagal mengakses kamera:', err);
-    let msg = 'Tidak dapat mengakses kamera.';
+    let msg = 'Tidak dapat mengakses kamera WebRTC.';
     if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-      msg = 'Akses kamera ditolak. Izinkan akses kamera di pengaturan browser, atau pilih foto dari perangkat.';
+      msg = 'Akses kamera ditolak oleh browser. Gunakan pemilih foto perangkat.';
     } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-      msg = 'Tidak ditemukan kamera pada perangkat ini. Silakan pilih foto dari perangkat.';
+      msg = 'Tidak ditemukan perangkat kamera WebRTC.';
     }
     showCameraError(msg);
   }
@@ -57,7 +80,7 @@ function showCameraError(msg) {
   const errBox = document.getElementById('cameraError');
   if (video) video.style.display = 'none';
   if (errBox) {
-    errBox.innerHTML = `${msg}<br><br><button class="btn btn-secondary" style="margin-top:6px;" onclick="closeCamera();triggerFileInput();">Pilih dari perangkat</button>`;
+    errBox.innerHTML = `${msg}<br><br><button class="btn btn-primary" style="margin-top:6px;" onclick="closeCamera();triggerNativeCamera();">Pilih / Bidik dari perangkat</button>`;
     errBox.style.display = 'flex';
   }
   const btnCapture = document.getElementById('btnCapture');
