@@ -1,16 +1,16 @@
 <div class="page active" id="page3">
   <div class="page-header">
     <div class="page-eyebrow">Tahap 4 dari 7</div>
-    <div class="page-title">Max Pooling Layer</div>
-    <div class="page-desc">Jendela 2x2 mengambil nilai tertinggi setiap area. Proses ini terjadi 3 kali (Pool1, Pool2, Pool3) — tiap kali dimensi spasial diperkecil 50% (panjang & lebar) untuk mengurangi beban komputasi, sampai akhirnya menjadi 28x28x128 sebelum masuk Global Average Pooling.</div>
+    <div class="page-title">Spatial Downsampling (Reduksi Spasial)</div>
+    <div class="page-desc">Pada arsitektur MobileNetV2, reduksi dimensi spasial dilakukan oleh <b>Depthwise Separable Convolution</b> dengan stride 2 (bukan Max Pooling tradisional). Proses ini terjadi 5 kali secara bertahap dari 224x224 hingga menjadi <b>7x7x1280</b> sebelum masuk Global Average Pooling. Demonstrasi di bawah menunjukkan konsep operasi downsampling menggunakan teknik max selection pada patch 4x4 sampel.</div>
   </div>
   <div class="grid2">
     <div>
       <div class="card">
-        <div class="card-title">CARA KERJA MAX POOLING 2x2</div>
+        <div class="card-title">DEMONSTRASI KONSEP DOWNSAMPLING 2x2</div>
         <div class="relu-formula">y = max(X<sub>2x2</sub>)</div>
         <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:-8px;margin-bottom:10px;">
-          Max Pooling mengambil <b>nilai maksimum</b> dari setiap blok 2x2 untuk mempertahankan fitur paling kuat sambil mengurangi resolusi spasial sebesar 75%.
+          Downsampling mengambil <b>nilai representatif</b> dari setiap blok 2x2 untuk mempertahankan fitur paling kuat sambil mengurangi resolusi spasial.
         </div>
         <div style="display:grid;grid-template-columns:1fr 30px 1fr;align-items:center;gap:8px;">
           <div>
@@ -23,13 +23,13 @@
             <div id="poolAfter" style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;"></div>
           </div>
         </div>
-        <div id="poolNote" style="font-size:12px;color:var(--text-secondary);margin-top:10px;padding:8px 10px;background:var(--bg);border-radius:var(--radius);">Tiap jendela 2x2 → ambil nilai tertinggi → 1 nilai output</div>
+        <div id="poolNote" style="font-size:12px;color:var(--text-secondary);margin-top:10px;padding:8px 10px;background:var(--bg);border-radius:var(--radius);">Tiap jendela 2x2 → ambil nilai tertinggi → 1 nilai output (demonstrasi konsep reduksi spasial)</div>
       </div>
 
       <!-- CARD 2: TABEL PERHITUNGAN EMPIRIS MAX POOLING -->
       <div class="card" style="margin-top:14px;">
         <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
-          PERHITUNGAN EMPIRIS MAX POOLING (4 JENDELA 2x2)
+          PERHITUNGAN EMPIRIS DOWNSAMPLING (4 JENDELA 2x2)
           <span class="tag" style="background:var(--amber-50);color:var(--amber-700);" id="poolTableTag">Filter #01</span>
         </div>
         <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
@@ -49,10 +49,10 @@
           </table>
         </div>
 
-        <!-- AKORDION 1: RINCIAN OPERASI MAX POOLING -->
+        <!-- AKORDION 1: RINCIAN OPERASI -->
         <details style="margin-top:12px;background:var(--bg,#fafafa);border:1px solid var(--border-strong,#cbd5e1);border-radius:var(--radius);padding:8px 12px;font-size:11px;color:var(--text-secondary);">
           <summary style="font-weight:700;color:var(--text-primary);cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;">
-            <span>📐 Lihat Rincian 4 Operasi Max Pooling Eksplisit (Windowing → Max Selection → Downsampling)</span>
+            <span>📐 Lihat Rincian 4 Operasi Downsampling Eksplisit (Windowing → Max Selection → Downsampling)</span>
           </summary>
           <div id="poolMathDetails" style="margin-top:10px;display:flex;flex-direction:column;gap:12px;border-top:1px dashed var(--border-strong,#cbd5e1);padding-top:12px;">
           </div>
@@ -61,7 +61,7 @@
         <!-- AKORDION 2: SILSILAH ASAL-USUL DATA -->
         <details style="margin-top:10px;background:var(--bg,#fafafa);border:1px solid var(--border-strong,#cbd5e1);border-radius:var(--radius);padding:8px 12px;font-size:11px;color:var(--text-secondary);">
           <summary style="font-weight:700;color:var(--text-primary);cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;">
-            <span>📥 Peta Asal-Usul &amp; Silsilah Seluruh Nilai Data Max Pooling</span>
+            <span>📥 Peta Asal-Usul &amp; Silsilah Seluruh Nilai Data Downsampling</span>
           </summary>
           <div id="poolLineageDetails" style="margin-top:10px;line-height:1.6;border-top:1px dashed var(--border-strong,#cbd5e1);padding-top:10px;">
           </div>
@@ -69,26 +69,32 @@
       </div>
 
       <div class="card" style="margin-top:14px;">
-        <div class="card-title">PARAMETER POOLING — 3 TAHAP BERURUTAN</div>
+        <div class="card-title">ARSITEKTUR REDUKSI SPASIAL MobileNetV2 — 5 TAHAP</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
+          MobileNetV2 menggunakan <b>Depthwise Separable Convolution stride 2</b> untuk memperkecil dimensi spasial (bukan Max Pooling tradisional).
+        </div>
         <table class="param-table">
-          <tr><td>Metode</td><td>Max Pooling, window 2x2, stride 2</td></tr>
-          <tr><td>Pool1</td><td>224x224x32 → 112x112x32</td></tr>
-          <tr><td>Pool2</td><td>112x112x64 → 56x56x64</td></tr>
-          <tr><td>Pool3</td><td>56x56x128 → 28x28x128</td></tr>
-          <tr><td>Output akhir ke GAP</td><td>28 x 28 x 128</td></tr>
+          <tr><td>Metode</td><td>Depthwise Separable Conv, stride 2</td></tr>
+          <tr><td>Tahap 1 (Conv1)</td><td>224x224x3 → 112x112x32</td></tr>
+          <tr><td>Tahap 2 (Block 1)</td><td>112x112x96 → 56x56x24</td></tr>
+          <tr><td>Tahap 3 (Block 3)</td><td>56x56x144 → 28x28x32</td></tr>
+          <tr><td>Tahap 4 (Block 6)</td><td>28x28x192 → 14x14x64</td></tr>
+          <tr><td>Tahap 5 (Block 13)</td><td>14x14x576 → 7x7x160</td></tr>
+          <tr><td>Final Conv (Conv_1)</td><td>7x7x320 → 7x7x1280</td></tr>
+          <tr style="font-weight:700;background:var(--amber-50,#fffbeb);"><td>Output akhir ke GAP</td><td>7 x 7 x 1280</td></tr>
         </table>
       </div>
     </div>
     <div>
       <div class="card">
         <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
-          FEATURE MAP SETELAH POOLING
+          FEATURE MAP SETELAH DOWNSAMPLING
           <span class="tag" style="background:var(--amber-50);color:var(--amber-700);">32 FILTER</span>
         </div>
         <div class="fmap-wrap" id="poolFmaps"></div>
         <div class="pb-wrap" style="margin-top:12px;">
-          <div class="pb-label"><span>Reduksi dimensi</span><span style="color:var(--amber-500);font-weight:600;">75%</span></div>
-          <div class="pb-track"><div class="pb-fill" style="width:75%;background:var(--amber-500);"></div></div>
+          <div class="pb-label"><span>Reduksi dimensi total</span><span style="color:var(--amber-500);font-weight:600;">224→7 (97%)</span></div>
+          <div class="pb-track"><div class="pb-fill" style="width:97%;background:var(--amber-500);"></div></div>
         </div>
       </div>
     </div>
@@ -101,4 +107,4 @@
       <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg> Lanjut ke Global Average Pooling
     </button>
   </div>
-</div>
+</div>

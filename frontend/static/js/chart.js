@@ -841,7 +841,7 @@ function renderPoolLeftCardOnly() {
         ${detailCardsHtml}
       </div>
       <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;font-size:11px;color:#92400e;">
-        <b>💡 Efek Downsampling Max Pooling:</b> Ukuran spasial feature map berkurang 50% di lebar & tinggi (224 x 224 → 112 x 112), sehingga total piksel menyusut 75% (16 → 4 sel pada patch lokal) tanpa kehilangan sinyal fitur terkuat.
+        <b>💡 Efek Downsampling Spasial:</b> Pada MobileNetV2, reduksi spasial dilakukan oleh Depthwise Separable Conv stride 2 (bukan Max Pooling). Dimensi menyusut bertahap: 224→112→56→28→14→7, menghasilkan tensor akhir 7x7x1280 sebelum GAP. Demonstrasi di atas mengilustrasikan konsep pemilihan sinyal terkuat pada patch lokal.
       </div>
     `;
   }
@@ -851,12 +851,12 @@ function renderPoolLeftCardOnly() {
   if (lineageEl) {
     lineageEl.innerHTML = `
       <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;font-size:11px;color:#334155;">
-        <div style="font-weight:700;color:#1E293B;margin-bottom:6px;">🔍 Peta Jalur Angka Max Pooling (Filter #${state.filter_index}):</div>
+        <div style="font-weight:700;color:#1E293B;margin-bottom:6px;">🔍 Peta Jalur Angka Downsampling (Filter #${state.filter_index}):</div>
         • <b>1. Masukan ReLU (4x4 Patch):</b> Diambil dari aktivasi positif ReLU pada koordinat sekitar pusat foto.<br/>
         • <b>2. Pembentukan Jendela 2x2 (Stride 2):</b> Patch 4x4 dibagi menjadi 4 region terpisah tanpa tumpang tindih.<br/>
         • <b>3. Pemilihan Sinyal Maksimum:</b> Membuang 3 piksel dengan respons lebih lemah dan mempertahankan 1 piksel dengan aktivasi tertinggi.<br/>
         • <b>4. Matriks Output (2x2 Output):</b> Menghasilkan 4 nilai puncak <code>[${maxVals.map(v => v.toFixed(2)).join(', ')}]</code> yang meneruskan fitur paling dominan ke blok konvolusi berikutnya.<br/>
-        • <b>5. Tahapan Hirarki Pooling Model:</b> Pool1 (224 → 112) → Pool2 (112 → 56) → Pool3 (56 → 28x28x128).
+        • <b>5. Tahapan Reduksi Spasial MobileNetV2:</b> Conv1 (224→112) → Block1 (112→56) → Block3 (56→28) → Block6 (28→14) → Block13 (14→7) → Conv_1 (7x7x1280).
       </div>
     `;
   }
@@ -1204,7 +1204,7 @@ function initFC() {
           • <b>1. Piksel Asli Foto:</b> Citra daun bawang 224 x 224 x 3 dinormalisasi ke rentang [0.0, 1.0].<br/>
           • <b>2. Ekstraksi Fitur Konvolusi:</b> Menyaring pola visual (tepi, bercak, tekstur) melalui 32 filter Conv1.<br/>
           • <b>3. Aktivasi Non-linear (ReLU):</b> Menghapus nilai negatif (< 0 → 0) untuk memperjelas batas fitur.<br/>
-          • <b>4. Reduksi Spasial (Max Pooling):</b> Meringkas wilayah 2 x 2 piksel menjadi 1 sinyal terkuat.<br/>
+          • <b>4. Reduksi Spasial (Depthwise Separable Conv stride 2):</b> Memperkecil dimensi spasial bertahap dari 224x224 hingga 7x7 melalui 5 tahap downsampling.<br/>
           • <b>5. Global Average Pooling (GAP):</b> Mengagregasi tensor 3D 7 x 7 x 1280 menjadi vektor 1D sepanjang 1.280 elemen.<br/>
           • <b>6. Klasifikasi Dense Layer:</b> Menghubungkan 1.280 sinyal fitur ke 128 neuron tersembunyi dan 4 logit kelas output.<br/>
           • <b>7. Output Softmax:</b> Menghasilkan keputusan akhir prediksi kelas <b style="color:#6b21a8;">${predName}</b> dengan tingkat keyakinan <b>${maxPct.toFixed(2)}%</b>.

@@ -55,11 +55,11 @@
         <div class="card-title">Ringkasan Proses CNN</div>
         <table class="param-table">
           <tr><td>Input gambar</td><td>224 x 224 x 3</td></tr>
-          <tr><td>Konvolusi</td><td>3 blok — 32 → 64 → 128 filter, kernel 3x3</td></tr>
+          <tr><td>Konvolusi</td><td>MobileNetV2 — 17 bottleneck blocks, Depthwise Separable Conv 3x3</td></tr>
           <tr><td>ReLU</td><td id="sumRelu">— nilai aktif</td></tr>
-          <tr><td>Pooling</td><td>3 tahap — akhir 28 x 28 x 128</td></tr>
+          <tr><td>Downsampling</td><td>5 tahap stride 2 — akhir 7 x 7 x 1280</td></tr>
           <tr><td>Global Average Pooling</td><td>1.280 elemen</td></tr>
-          <tr><td>Fully connected</td><td>128 neuron (Dense) + Dropout 0.3 & 0.2</td></tr>
+          <tr><td>Fully connected</td><td>128 neuron (Dense ReLU) + Dropout 0.3 & 0.2</td></tr>
           <tr><td>Output</td><td id="sumOutputClasses">— kelas — Softmax</td></tr>
         </table>
       </div>

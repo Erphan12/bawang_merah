@@ -174,28 +174,28 @@ $$
 X_{i, j} = \frac{\text{Channel}(i, j)}{255.0}
 $$
 
-Diambil sampel patch citra $3 x 3$ piksel dari area pusat citra uji (`(126).jpg`, koordinat pusat $x=112, y=112$):
+Diambil sampel patch citra $3 x 3$ piksel dari area pusat citra uji lapangan (koordinat pusat $x=112, y=112$):
 
 - **Piksel RGB Asli $[0, 255]$:**
-  - Baris 1: $(1,1)=[168, 169, 157]$, $(1,2)=[164, 165, 152]$, $(1,3)=[168, 169, 156]$
-  - Baris 2: $(2,1)=[172, 172, 160]$, $(2,2)=[169, 168, 156]$, $(2,3)=[167, 166, 153]$
-  - Baris 3: $(3,1)=[176, 175, 163]$, $(3,2)=[176, 174, 161]$, $(3,3)=[173, 169, 157]$
+  - Baris 1: $(1,1)=[151, 195, 197]$, $(1,2)=[144, 184, 186]$, $(1,3)=[145, 187, 189]$
+  - Baris 2: $(2,1)=[182, 226, 218]$, $(2,2)=[178, 224, 214]$, $(2,3)=[177, 221, 212]$
+  - Baris 3: $(3,1)=[194, 232, 202]$, $(3,2)=[194, 232, 201]$, $(3,3)=[193, 232, 203]$
 
 - **Hasil Normalisasi $[0.0, 1.0]$ (Rata-rata 3 Kanal RGB per Sel):**
-  - Sel $(1,1)$: $\text{Rata-rata}(168, 169, 157) = 164.6667 / 255.0 = \mathbf{0.6458}$
-  - Sel $(1,2)$: $\text{Rata-rata}(164, 165, 152) = 160.3333 / 255.0 = \mathbf{0.6288}$
-  - Sel $(1,3)$: $\text{Rata-rata}(168, 169, 156) = 164.3333 / 255.0 = \mathbf{0.6444}$
-  - Sel $(2,1)$: $\text{Rata-rata}(172, 172, 160) = 168.0000 / 255.0 = \mathbf{0.6588}$
-  - Sel $(2,2)$: $\text{Rata-rata}(169, 168, 156) = 164.3333 / 255.0 = \mathbf{0.6444}$
-  - Sel $(2,3)$: $\text{Rata-rata}(167, 166, 153) = 162.0000 / 255.0 = \mathbf{0.6353}$
-  - Sel $(3,1)$: $\text{Rata-rata}(176, 175, 163) = 171.3333 / 255.0 = \mathbf{0.6719}$
-  - Sel $(3,2)$: $\text{Rata-rata}(176, 174, 161) = 170.3333 / 255.0 = \mathbf{0.6680}$
-  - Sel $(3,3)$: $\text{Rata-rata}(173, 169, 157) = 166.3333 / 255.0 = \mathbf{0.6523}$
+  - Sel $(1,1)$: $\text{Rata-rata}(151, 195, 197) = 181.0000 / 255.0 = \mathbf{0.7098}$
+  - Sel $(1,2)$: $\text{Rata-rata}(144, 184, 186) = 171.3333 / 255.0 = \mathbf{0.6719}$
+  - Sel $(1,3)$: $\text{Rata-rata}(145, 187, 189) = 173.6667 / 255.0 = \mathbf{0.6810}$
+  - Sel $(2,1)$: $\text{Rata-rata}(182, 226, 218) = 208.6667 / 255.0 = \mathbf{0.8183}$
+  - Sel $(2,2)$: $\text{Rata-rata}(178, 224, 214) = 205.3333 / 255.0 = \mathbf{0.8052}$
+  - Sel $(2,3)$: $\text{Rata-rata}(177, 221, 212) = 203.3333 / 255.0 = \mathbf{0.7974}$
+  - Sel $(3,1)$: $\text{Rata-rata}(194, 232, 202) = 209.3333 / 255.0 = \mathbf{0.8209}$
+  - Sel $(3,2)$: $\text{Rata-rata}(194, 232, 201) = 209.0000 / 255.0 = \mathbf{0.8196}$
+  - Sel $(3,3)$: $\text{Rata-rata}(193, 232, 203) = 209.3333 / 255.0 = \mathbf{0.8209}$
 
 Sehingga matriks piksel masukan ter-normalisasi ($I_{\text{norm}}$) adalah:
 
 $$
-I_{\text{norm}} = \begin{bmatrix} 0.6458 & 0.6288 & 0.6444 \\ 0.6588 & 0.6444 & 0.6353 \\ 0.6719 & 0.6680 & 0.6523 \end{bmatrix}
+I_{\text{norm}} = \begin{bmatrix} 0.7098 & 0.6719 & 0.6810 \\ 0.8183 & 0.8052 & 0.7974 \\ 0.8209 & 0.8196 & 0.8209 \end{bmatrix}
 $$
 
 ---
@@ -214,21 +214,21 @@ W = \begin{bmatrix} -0.19900 & -0.29629 & -0.07772 \\ +0.32279 & +0.42667 & +0.1
 $$
 
 **Penjabaran Perkalian 9 Sel Spasial secara Detail:**
-1. **Sel (1,1):** $0.6458 x -0.19900 = \mathbf{-0.128507}$
-2. **Sel (1,2):** $0.6288 x -0.29629 = \mathbf{-0.186296}$
-3. **Sel (1,3):** $0.6444 x -0.07772 = \mathbf{-0.050088}$
-4. **Sel (2,1):** $0.6588 x +0.32279 = \mathbf{+0.212659}$
-5. **Sel (2,2):** $0.6444 x +0.42667 = \mathbf{+0.274963}$
-6. **Sel (2,3):** $0.6353 x +0.15698 = \mathbf{+0.099730}$
-7. **Sel (3,1):** $0.6719 x -0.10745 = \mathbf{-0.072195}$
-8. **Sel (3,2):** $0.6680 x -0.00619 = \mathbf{-0.004133}$
-9. **Sel (3,3):** $0.6523 x -0.07872 = \mathbf{-0.051350}$
+1. **Sel (1,1):** $0.7098 x -0.19900 = \mathbf{-0.141253}$
+2. **Sel (1,2):** $0.6719 x -0.29629 = \mathbf{-0.199077}$
+3. **Sel (1,3):** $0.6810 x -0.07772 = \mathbf{-0.052933}$
+4. **Sel (2,1):** $0.8183 x +0.32279 = \mathbf{+0.264136}$
+5. **Sel (2,2):** $0.8052 x +0.42667 = \mathbf{+0.343564}$
+6. **Sel (2,3):** $0.7974 x +0.15698 = \mathbf{+0.125176}$
+7. **Sel (3,1):** $0.8209 x -0.10745 = \mathbf{-0.088207}$
+8. **Sel (3,2):** $0.8196 x -0.00619 = \mathbf{-0.005072}$
+9. **Sel (3,3):** $0.8209 x -0.07872 = \mathbf{-0.064625}$
 
 **Penjumlahan Bertahap Seluruh Nilai Komponen:**
-- Total komponen negatif $= -0.128507 - 0.186296 - 0.050088 - 0.072195 - 0.004133 - 0.051350 = \mathbf{-0.492569}$
-- Total komponen positif $= +0.212659 + 0.274963 + 0.099730 = \mathbf{+0.587352}$
+- Total komponen negatif $= -0.141253 - 0.199077 - 0.052933 - 0.088207 - 0.005072 - 0.064625 = \mathbf{-0.551167}$
+- Total komponen positif $= +0.264136 + 0.343564 + 0.125176 = \mathbf{+0.732876}$
 - Hasil akhir konvolusi mentah:
-  $$y = -0.492569 + 0.587352 = \mathbf{+0.094783}$$
+  $$y = -0.551167 + 0.732876 = \mathbf{+0.181709}$$
 
 ---
 
@@ -248,15 +248,15 @@ $$
 
 **Rincian Perhitungan Langkah demi Langkah:**
 1. **Pengurangan Mean ($\mu$):**
-   $$y - \mu = 0.094783 - (-0.036762) = \mathbf{+0.131545}$$
+   $$y - \mu = 0.181709 - (-0.036762) = \mathbf{+0.218471}$$
 2. **Penambahan Epsilon ($\epsilon = 0.001$):**
    $$\sigma^2 + \epsilon = 0.120517 + 0.001000 = \mathbf{0.121517}$$
 3. **Akar Kuadrat Standar Deviasi:**
    $$\sqrt{0.121517} = \mathbf{0.348592}$$
 4. **Pembagian Normalisasi Standardized ($\hat{x}$):**
-   $$\hat{x} = \frac{0.131545}{0.348592} = \mathbf{+0.377359}$$
+   $$\hat{x} = \frac{0.218471}{0.348592} = \mathbf{+0.626722}$$
 5. **Skala ($\gamma$) & Geseran ($\beta$):**
-   $$y_{\text{BN}} = (0.612176 x 0.377359) + 2.255549 = 0.231010 + 2.255549 = \mathbf{+2.486559}$$
+   $$y_{\text{BN}} = (0.612176 x 0.626722) + 2.255549 = 0.383664 + 2.255549 = \mathbf{+2.639213}$$
 
 ---
 
@@ -268,8 +268,8 @@ f(x) = \max(0, x)
 $$
 
 **Perubahan Nilai Aktivasi:**
-- **Kasus 1 — Nilai Positif ($x = +2.486559$):**
-  $$f(+2.486559) = \max(0, +2.486559) = \mathbf{+2.486559} \quad (\text{Nilai positif tetap dipertahankan})$$
+- **Kasus 1 — Nilai Positif ($x = +2.639213$):**
+  $$f(+2.639213) = \max(0, +2.639213) = \mathbf{+2.639213} \quad (\text{Nilai positif tetap dipertahankan})$$
 - **Kasus 2 — Nilai Negatif (Misalkan pada koordinat piksel lain $x = -0.166700$):**
   $$f(-0.166700) = \max(0, -0.166700) = \mathbf{0.000000} \quad (\text{Nilai negatif diubah menjadi 0})$$
 
@@ -358,34 +358,34 @@ z_k = \sum (X_i x W_{i,k}) + b_k \implies P(y_k) = \frac{e^{z_k}}{\sum e^{z_j}} 
 $$
 
 **Nilai Logit Mentah Asli dari Ekstraksi Model `best_bawang_model.h5`:**
-- $z_1 \text{ (Moler)} = \mathbf{+0.038101}$
-- $z_2 \text{ (Bukan Bawang)} = \mathbf{+0.202019}$
-- $z_3 \text{ (Sehat)} = \mathbf{+0.001910}$
-- $z_4 \text{ (Trotol / Bercak Ungu)} = \mathbf{+0.757969}$
+- $z_1 \text{ (Moler / Layu Fusarium)} = \mathbf{-0.390257}$
+- $z_2 \text{ (Objek Bukan Bawang)} = \mathbf{-3.319969}$
+- $z_3 \text{ (Sehat)} = \mathbf{-0.381395}$
+- $z_4 \text{ (Trotol / Bercak Ungu)} = \mathbf{+2.927967}$
 
 **Normalisasi Probabilitas Softmax Langkah demi Langkah:**
 
 1. **Penghitungan Nilai Eksponensial $e^{z_k}$ per Kelas:**
-   - Kelas 1 (Moler): $e^{+0.038101} = \mathbf{1.038836}$
-   - Kelas 2 (Bukan Bawang): $e^{+0.202019} = \mathbf{1.223872}$
-   - Kelas 3 (Sehat): $e^{+0.001910} = \mathbf{1.001912}$
-   - Kelas 4 (Trotol): $e^{+0.757969} = \mathbf{2.133939}$
+   - Kelas 1 (Moler): $e^{-0.390257} = \mathbf{0.676883}$
+   - Kelas 2 (Bukan Bawang): $e^{-3.319969} = \mathbf{0.036154}$
+   - Kelas 3 (Sehat): $e^{-0.381395} = \mathbf{0.682908}$
+   - Kelas 4 (Trotol): $e^{+2.927967} = \mathbf{18.689592}$
 
 2. **Penjumlahan Total Penyebut Softmax ($\sum e^{z_j}$):**
-   $$\sum e^{z} = 1.038836 + 1.223872 + 1.001912 + 2.133939 = \mathbf{5.398559}$$
+   $$\sum e^{z} = 0.676883 + 0.036154 + 0.682908 + 18.689592 = \mathbf{20.085537}$$
 
 3. **Penghitungan Persentase Probabilitas Akhir per Kelas:**
-   - **Moler:**
-     $$P(\text{moler}) = \left( \frac{1.038836}{5.398559} \right) x 100\% = 0.192429 x 100\% = \mathbf{19,24\%}$$
-   - **Bukan Bawang:**
-     $$P(\text{non\_bawang}) = \left( \frac{1.223872}{5.398559} \right) x 100\% = 0.226703 x 100\% = \mathbf{22,67\%}$$
-   - **Sehat:**
-     $$P(\text{sehat}) = \left( \frac{1.001912}{5.398559} \right) x 100\% = 0.185589 x 100\% = \mathbf{18,56\%}$$
    - **Trotol / Bercak Ungu:**
-     $$P(\text{trotol}) = \left( \frac{2.133939}{5.398559} \right) x 100\% = 0.395279 x 100\% = \mathbf{39,53\%}$$
+     $$P(\text{trotol}) = \left( \frac{18.689592}{20.085537} \right) x 100\% = 0.930500 x 100\% = \mathbf{93,05\%}$$
+   - **Sehat:**
+     $$P(\text{sehat}) = \left( \frac{0.682908}{20.085537} \right) x 100\% = 0.034000 x 100\% = \mathbf{3,40\%}$$
+   - **Moler / Layu Fusarium:**
+     $$P(\text{moler}) = \left( \frac{0.676883}{20.085537} \right) x 100\% = 0.033700 x 100\% = \mathbf{3,37\%}$$
+   - **Objek Bukan Bawang:**
+     $$P(\text{non\_bawang}) = \left( \frac{0.036154}{20.085537} \right) x 100\% = 0.001800 x 100\% = \mathbf{0,18\%}$$
 
 **Kesimpulan Inferensi Diagnostik:**  
-Model CNN memprediksi citra masukan secara otomatis sebagai **Trotol / Bercak Ungu (*Alternaria porri*)** dengan nilai kepastian probabilitas tertinggi sebesar **39,53%**.
+Model CNN memprediksi citra masukan secara otomatis sebagai **Trotol / Bercak Ungu (*Alternaria porri*)** dengan nilai kepastian probabilitas tertinggi sebesar **93,05%** (Kategori Akurat).
 
 ---
 

@@ -1,31 +1,68 @@
-# Python cache and local environments
+# ===================================================
+# Python & Virtual Environments
+# ===================================================
 __pycache__/
 *.py[cod]
+*$py.class
+*.pyo
 .venv/
 venv/
 env/
+ENV/
 
-# Local datasets and generated reports
-dataset/
-dataset_split/
-reports/*
-!reports/.gitkeep
+# ===================================================
+# Dokumen Biner & Presentasi (Word, PowerPoint, Excel, PDF)
+# ===================================================
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.xlsx
+*.xls
+*.pdf
+~$*
+Caca/
 
-# Heavy document binaries in dokumen/ (Ignore .pdf & .docx, keep .md docs)
-dokumen/*.pdf
+# Dokumen biner di dalam subfolder
 dokumen/*.docx
+dokumen/*.doc
+dokumen/*.pptx
 dokumen/*.xlsx
+dokumen/*.pdf
 !dokumen/*.md
 
-# Archives, model weights and local bundles
+# ===================================================
+# Reports, Logs & Temporary Files
+# ===================================================
+reports/*
+!reports/.gitkeep
+*.log
+*.tmp
+*.bak
+
+# ===================================================
+# Archives & Bundles
+# ===================================================
 *.zip
 *.tar.gz
 *.rar
+*.7z
 
-# Local secrets and editor files
-.env
-.env.*
-!.env.example
+# ===================================================
+# IDE, OS & Editor Artifacts
+# ===================================================
 .vscode/
 .idea/
 *.swp
+*.swo
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===================================================
+# Local Secrets & Environment
+# ===================================================
+.env
+.env.*
+!.env.example

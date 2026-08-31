@@ -194,6 +194,11 @@ def get_session_layer_data(session_id: str) -> dict:
 # ROUTING HALAMAN WEB (FRONTEND HTML PAGES)
 # ============================================================
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    from fastapi.responses import Response
+    return Response(content=b"", media_type="image/x-icon")
+
 @app.get("/")
 def serve_root():
     filepath = os.path.join(FRONTEND_DIR, "beranda.html")
