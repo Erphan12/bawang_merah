@@ -294,10 +294,32 @@ async def predict_direct(file: UploadFile = File(...)):
         for label, prob in zip(class_labels, predictions)
     ]
 
-    meta = get_disease_meta(predicted_label)
+    # Cari probabilitas kelas 'Objek Bukan Bawang'
+    non_bawang_pct = 0.0
+    for p in probabilities_list:
+        if "bukan" in str(p["name"]).lower() or "non" in str(p["name"]).lower():
+            non_bawang_pct = p["pct"]
+
+    sorted_probs = sorted([float(p) * 100 for p in predictions], reverse=True)
+    top1_conf = sorted_probs[0]
+    top2_conf = sorted_probs[1] if len(sorted_probs) > 1 else 0.0
+    confidence_gap = top1_conf - top2_conf
+
+    is_rejected = (
+        (meta.get("display_name") == "Objek Bukan Bawang") or
+        ("non" in str(predicted_label).lower()) or
+        (confidence_score < 50.0) or
+        (confidence_gap < 12.0 and confidence_score < 65.0) or
+        (non_bawang_pct >= 25.0)
+    )
+
+    if is_rejected:
+        meta = DISEASE_METADATA["non_bawang"]
+        predicted_label = "non_bawang"
 
     return {
         "success": True,
+        "rejected": is_rejected,
         "filename": file.filename,
         "prediction": predicted_label,
         "confidence": round(confidence_score, 2),
@@ -402,12 +424,23 @@ def api_predict_session(session_id: str = Query(...)):
         if "bukan" in str(p["name"]).lower() or "non" in str(p["name"]).lower():
             non_bawang_pct = p["pct"]
 
-    # Rejection Guard (Tolak HANYA jika memang 'Objek Bukan Bawang' atau confidence terlampau rendah < 30% / probabilitas Bukan Bawang > 40%):
+    # Urutkan nilai probabilitas untuk analisis margin gap / ketidakpastian
+    sorted_probs = sorted([float(p) * 100 for p in predictions], reverse=True)
+    top1_conf = sorted_probs[0]
+    top2_conf = sorted_probs[1] if len(sorted_probs) > 1 else 0.0
+    confidence_gap = top1_conf - top2_conf
+
+    # Rejection Guard Cerdas & Komprehensif:
+    # 1. Model memang secara eksplisit memprediksi 'non_bawang'
+    # 2. Confidence kelas tertinggi di bawah batas yakin (< 50.0%)
+    # 3. Model ambigu/ragu-ragu: selisih kelas 1 & 2 sangat tipis (gap < 12.0%) dan top1 < 65%
+    # 4. Probabilitas komponen bukan bawang cukup signifikan (>= 25.0%)
     is_rejected = (
         (meta.get("display_name") == "Objek Bukan Bawang") or
         ("non" in str(predicted_label).lower()) or
-        (confidence_score < 30.0) or
-        (non_bawang_pct > 40.0)
+        (confidence_score < 50.0) or
+        (confidence_gap < 12.0 and confidence_score < 65.0) or
+        (non_bawang_pct >= 25.0)
     )
 
     if is_rejected:
@@ -423,6 +456,8 @@ def api_predict_session(session_id: str = Query(...)):
     else:
         relu_active_pct = 64.2
 
+    final_confidence = non_bawang_pct if is_rejected else confidence_score
+
     res_data = {
         "success": True,
         "data": {
@@ -432,7 +467,7 @@ def api_predict_session(session_id: str = Query(...)):
             "predicted_class_idx": predicted_class_idx if not is_rejected else 3,
             "predicted_class": meta["display_name"],
             "predicted_latin": meta["latin"],
-            "confidence": confidence_score,
+            "confidence": round(final_confidence, 2),
             "color": meta["color"],
             "relu_active_pct": relu_active_pct,
             "rekomendasi": meta["rekomendasi"],

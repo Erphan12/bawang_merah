@@ -1361,8 +1361,31 @@ function initOutput() {
       },
       options: {
         indexAxis: 'y',
-        plugins: { legend: { display: false } },
-        scales: { x: { max: 100, ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } },
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ` ${ctx.raw}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { font: { size: 10 }, callback: v => v + '%' }
+          },
+          y: {
+            ticks: {
+              font: { size: 10, weight: '500' },
+              autoSkip: false
+            }
+          }
+        },
         animation: false,
       }
     });

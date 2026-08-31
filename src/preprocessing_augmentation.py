@@ -26,11 +26,12 @@ def get_data_generators(target_size=IMG_SIZE, batch_size=BATCH_SIZE):
        - Normalisasi piksel dari range [0, 255] menjadi [0.0, 1.0] (rescale=1./255)
     
     2. Augmentasi Data (hanya diterapkan pada training set):
-       - Rotation Range: Rotasi acak hingga 20 derajat
-       - Width/Height Shift: Pergeseran posisi horizontal/vertikal hingga 15%
-       - Shear Range: Pergeseran sudut (shear transformation)
-       - Zoom Range: Perbesaran/perkecilan acak hingga 20%
-       - Brightness Range: Variasi pencahayaan acak antara 80% - 120%
+       - Rotation Range: Rotasi acak hingga 25 derajat
+       - Width/Height Shift: Pergeseran posisi horizontal/vertikal hingga 20%
+       - Shear Range: Pergeseran sudut (shear transformation) hingga 20%
+       - Zoom Range: Perbesaran/perkecilan acak hingga 30% (lebih agresif agar bercak trotol terlihat)
+       - Brightness Range: Variasi pencahayaan acak antara 70% - 130% (kontras lebih lebar)
+       - Channel Shift Range: Variasi warna acak antar channel RGB (membantu deteksi bercak keunguan)
        - Horizontal & Vertical Flip: Pembalikan posisi secara acak
        - Fill Mode: Penanganan area piksel kosong akibat rotasi/geser
     """
@@ -38,15 +39,16 @@ def get_data_generators(target_size=IMG_SIZE, batch_size=BATCH_SIZE):
     
     # 1. Augmentasi + Normalisasi untuk Dataset Training
     train_datagen = ImageDataGenerator(
-        rescale=1./255,            # Normalisasi pixel ke [0, 1]
-        rotation_range=20,         # Rotasi acak max 20 derajat
-        width_shift_range=0.15,    # Geser horizontal
-        height_shift_range=0.15,   # Geser vertikal
-        shear_range=0.15,          # Transformaasi shear
-        zoom_range=0.2,            # Zoom in / zoom out
-        brightness_range=[0.8, 1.2],# Variasi kecerahan/brightness
-        horizontal_flip=True,      # Flip horizontal
-        vertical_flip=True,        # Flip vertikal
+        rescale=1./255,               # Normalisasi pixel ke [0, 1]
+        rotation_range=25,            # Rotasi acak max 25 derajat
+        width_shift_range=0.20,       # Geser horizontal 20%
+        height_shift_range=0.20,      # Geser vertikal 20%
+        shear_range=0.20,             # Transformasi shear 20%
+        zoom_range=0.30,              # Zoom in/out lebih agresif (agar bercak trotol terlihat model)
+        brightness_range=[0.70, 1.30],# Variasi kecerahan lebih lebar (70%-130%)
+        channel_shift_range=20.0,     # Variasi warna acak per channel RGB (bantu deteksi bercak ungu)
+        horizontal_flip=True,         # Flip horizontal
+        vertical_flip=True,           # Flip vertikal
         fill_mode='nearest'
     )
     

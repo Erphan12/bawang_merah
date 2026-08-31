@@ -101,11 +101,9 @@ def main():
         json.dump(train_gen.class_indices, f, indent=4)
     print(f"Mapping class_indices disimpan ke: {class_indices_path}")
 
-
     print(f"Sub-folder terdeteksi: {list(train_gen.class_indices.keys())}")
     actual_num_classes = len(train_gen.class_indices)
 
-    
     print("\n" + "=" * 60)
     print("2. MEMBANGUN DAN COMPILE MODEL TRANSFER LEARNING (MobileNetV2)")
     print("=" * 60)
@@ -123,7 +121,7 @@ def main():
     print("3. MENYIAPKAN CALLBACKS (EarlyStopping & ModelCheckpoint)")
     print("=" * 60)
     
-    cb_early_stopping = callbacks.EarlyStopping(
+    cb_early_stopping_p1 = callbacks.EarlyStopping(
         monitor='val_loss',
         patience=5,
         restore_best_weights=True,
@@ -140,35 +138,109 @@ def main():
 
     cb_reduce_lr = callbacks.ReduceLROnPlateau(
         monitor='val_loss',
-        factor=0.2,
-        patience=3,
+        factor=0.3,
+        patience=2,
         min_lr=1e-6,
         verbose=1
     )
 
-    callbacks_list = [cb_early_stopping, cb_model_checkpoint, cb_reduce_lr]
-
     print("\n" + "=" * 60)
-    print("4. MEMULAI TRAINING MODEL")
+    print("4. TAHAP 1: TRAINING HEAD CLASSIFIER (Base Frozen)")
     print("=" * 60)
     
-    history = model.fit(
+    # Hitung class weights untuk mengimbangi jumlah data non_bawang yang lebih banyak
+    from sklearn.utils.class_weight import compute_class_weight
+    import numpy as np
+    class_weights_arr = compute_class_weight(
+        class_weight='balanced',
+        classes=np.unique(train_gen.classes),
+        y=train_gen.classes
+    )
+    class_weight_dict = dict(enumerate(class_weights_arr))
+    print(f"Class Weights seimbang: {class_weight_dict}")
+
+    history_phase1 = model.fit(
         train_gen,
-        epochs=EPOCHS,
+        epochs=15,
         validation_data=val_gen,
-        callbacks=callbacks_list
+        class_weight=class_weight_dict,
+        callbacks=[cb_early_stopping_p1, cb_model_checkpoint, cb_reduce_lr]
     )
 
     print("\n" + "=" * 60)
-    print("5. MEMBUAT PLOT AKURASI & LOSS DENGAN MATPLOTLIB")
+    print("5. TAHAP 2: DEEP FINE-TUNING MOBILENETV2 (60 LAYER TERAKHIR)")
     print("=" * 60)
     
-    plot_training_history(history, save_path=PLOT_SAVE_PATH)
+    # Ambil base model MobileNetV2
+    base_model = None
+    for layer in model.layers:
+        if isinstance(layer, tf.keras.Model) or "mobilenetv2" in layer.name.lower():
+            base_model = layer
+            break
+
+    if base_model:
+        base_model.trainable = True
+        # Unfreeze 60 layer terakhir agar fitur tekstur & bercak daun terpelajari lebih tajam
+        fine_tune_at = max(0, len(base_model.layers) - 60)
+        for layer in base_model.layers[:fine_tune_at]:
+            layer.trainable = False
+        print(f"Base model unfreezed mulai layer ke-{fine_tune_at} dari {len(base_model.layers)} total layers.")
+    
+    # Compile ulang dengan learning rate rendah dan label smoothing ringan (0.05)
+    model.compile(
+        optimizer=optimizers.Adam(learning_rate=3e-5),
+        loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.05),
+        metrics=['accuracy']
+    )
+
+    cb_early_stopping_p2 = callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=8,
+        restore_best_weights=True,
+        verbose=1
+    )
+
+    cb_reduce_lr_p2 = callbacks.ReduceLROnPlateau(
+        monitor='val_loss',
+        factor=0.3,
+        patience=3,
+        min_lr=5e-7,
+        verbose=1
+    )
+
+    history_phase2 = model.fit(
+        train_gen,
+        epochs=25,
+        validation_data=val_gen,
+        class_weight=class_weight_dict,
+        callbacks=[cb_early_stopping_p2, cb_model_checkpoint, cb_reduce_lr_p2]
+    )
+
+    # Gabungkan riwayat training
+    combined_history = {
+        'accuracy': history_phase1.history['accuracy'] + history_phase2.history['accuracy'],
+        'val_accuracy': history_phase1.history['val_accuracy'] + history_phase2.history['val_accuracy'],
+        'loss': history_phase1.history['loss'] + history_phase2.history['loss'],
+        'val_loss': history_phase1.history['val_loss'] + history_phase2.history['val_loss'],
+    }
+    
+    class HistoryWrapper:
+        def __init__(self, history_dict):
+            self.history = history_dict
+
+    print("\n" + "=" * 60)
+    print("6. MEMBUAT PLOT AKURASI & LOSS DENGAN MATPLOTLIB")
+    print("=" * 60)
+    
+    plot_training_history(HistoryWrapper(combined_history), save_path=PLOT_SAVE_PATH)
     
     print("\n" + "=" * 60)
-    print("6. EVALUASI MODEL PADA TEST SET")
+    print("7. EVALUASI MODEL PADA TEST SET")
     print("=" * 60)
-    test_loss, test_acc = model.evaluate(test_gen)
+    
+    # Muat bobot terbaik yang tersimpan
+    best_model = tf.keras.models.load_model(MODEL_SAVE_PATH)
+    test_loss, test_acc = best_model.evaluate(test_gen)
     print(f"Hasil Test Accuracy : {test_acc * 100:.2f}%")
     print(f"Hasil Test Loss     : {test_loss:.4f}")
 
