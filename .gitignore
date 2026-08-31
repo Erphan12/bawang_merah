@@ -1,17 +1,25 @@
 # ===================================================
-# Python & Virtual Environments
+# 1. Dataset & Citra (DIBLOKIR TOTAL DARI GITHUB)
 # ===================================================
-__pycache__/
-*.py[cod]
-*$py.class
-*.pyo
-.venv/
-venv/
-env/
-ENV/
+dataset/
+dataset_split/
+dataset*/
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.bmp
 
 # ===================================================
-# Dokumen Biner & Presentasi (Word, PowerPoint, Excel, PDF)
+# 2. Model Weights Berukuran Besar
+# ===================================================
+*.h5
+*.keras
+models/*.h5
+models/*.keras
+
+# ===================================================
+# 3. Dokumen Biner & Presentasi
 # ===================================================
 *.docx
 *.doc
@@ -23,26 +31,35 @@ ENV/
 ~$*
 Caca/
 
-# Dokumen biner di dalam subfolder
 dokumen/*.docx
 dokumen/*.doc
 dokumen/*.pptx
 dokumen/*.xlsx
 dokumen/*.pdf
 
-dokumen/*.md
+# ===================================================
+# 4. Python Cache & Virtual Environments
+# ===================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.venv/
+venv/
+env/
+ENV/
 
 # ===================================================
-# Reports, Logs & Temporary Files
+# 5. Reports, Logs & Temporary Files
 # ===================================================
 reports/*
-reports/.gitkeep
+!reports/.gitkeep
 *.log
 *.tmp
 *.bak
 
 # ===================================================
-# Archives & Bundles
+# 6. Archives & Compressed Files
 # ===================================================
 *.zip
 *.tar.gz
@@ -50,7 +67,7 @@ reports/.gitkeep
 *.7z
 
 # ===================================================
-# IDE, OS & Editor Artifacts
+# 7. IDE, OS & Editor Artifacts
 # ===================================================
 .vscode/
 .idea/
@@ -62,8 +79,8 @@ ehthumbs.db
 Desktop.ini
 
 # ===================================================
-# Local Secrets & Environment
+# 8. Local Secrets & Environment
 # ===================================================
 .env
 .env.*
-.env.example
+!.env.example
