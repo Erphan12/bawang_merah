@@ -29,13 +29,14 @@ dokumen/*.doc
 dokumen/*.pptx
 dokumen/*.xlsx
 dokumen/*.pdf
-!dokumen/*.md
+
+dokumen/*.md
 
 # ===================================================
 # Reports, Logs & Temporary Files
 # ===================================================
 reports/*
-!reports/.gitkeep
+reports/.gitkeep
 *.log
 *.tmp
 *.bak
@@ -65,4 +66,4 @@ Desktop.ini
 # ===================================================
 .env
 .env.*
-!.env.example
+.env.example
